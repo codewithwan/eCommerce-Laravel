@@ -25,7 +25,7 @@ export const mockProducts: ProductExtended[] = [
     { 
         id: 1, 
         name: 'Minimalist Watch', 
-        price: 129.99, 
+        price: 1949850, 
         image: 'https://images.unsplash.com/photo-1523275335684-37898b6baf30', 
         category: 'Accessories',
         sellerName: 'Elegant Accessories',
@@ -55,7 +55,7 @@ export const mockProducts: ProductExtended[] = [
     { 
         id: 2, 
         name: 'Modern Backpack', 
-        price: 89.99, 
+        price: 1349850, 
         image: 'https://images.unsplash.com/photo-1491637639811-60e2756cc1c7', 
         category: 'Accessories',
         sellerName: 'Urban Bags',
@@ -75,7 +75,7 @@ export const mockProducts: ProductExtended[] = [
     { 
         id: 3, 
         name: 'Wireless Earbuds', 
-        price: 79.99, 
+        price: 1199850, 
         image: 'https://images.unsplash.com/photo-1572569511254-d8f925fe2cbb', 
         category: 'Electronics',
         sellerName: 'Tech Gadgets',
@@ -95,7 +95,7 @@ export const mockProducts: ProductExtended[] = [
     { 
         id: 4, 
         name: 'Ceramic Mug', 
-        price: 24.99, 
+        price: 374850,
         image: 'https://images.unsplash.com/photo-1514228742587-6b1558fcca3d', 
         category: 'Home Goods',
         sellerName: 'HomeStyle',
@@ -115,7 +115,7 @@ export const mockProducts: ProductExtended[] = [
     { 
         id: 5, 
         name: 'Leather Wallet', 
-        price: 49.99, 
+        price: 749850, 
         image: 'https://images.unsplash.com/photo-1517254797898-ee1bd2748ce5', 
         category: 'Accessories',
         sellerName: 'Leather Luxe',
@@ -135,7 +135,7 @@ export const mockProducts: ProductExtended[] = [
     { 
         id: 6, 
         name: 'Desk Lamp', 
-        price: 59.99, 
+        price: 899850, 
         image: 'https://images.unsplash.com/photo-1507473885765-e6ed057f782c', 
         category: 'Home Goods',
         sellerName: 'Bright Lights',
@@ -155,7 +155,7 @@ export const mockProducts: ProductExtended[] = [
     { 
         id: 7, 
         name: 'Minimalist Chair', 
-        price: 199.99, 
+        price: 2999850,
         image: 'https://images.unsplash.com/photo-1503602642458-232111445657', 
         category: 'Home Goods',
         sellerName: 'Modern Furniture',
@@ -175,7 +175,7 @@ export const mockProducts: ProductExtended[] = [
     { 
         id: 8, 
         name: 'Smart Speaker', 
-        price: 149.99, 
+        price: 2249850,
         image: 'https://images.unsplash.com/photo-1546868871-7041f2a55e12', 
         category: 'Electronics',
         sellerName: 'Smart Home',
@@ -195,7 +195,7 @@ export const mockProducts: ProductExtended[] = [
     { 
         id: 9, 
         name: 'Cotton T-Shirt', 
-        price: 34.99, 
+        price: 524850, 
         image: 'https://images.unsplash.com/photo-1521572163474-6864f9cf17ab', 
         category: 'Apparel',
         sellerName: 'Casual Wear',
@@ -225,7 +225,7 @@ export const mockProducts: ProductExtended[] = [
     { 
         id: 10, 
         name: 'Slim Fit Jeans', 
-        price: 69.99, 
+        price: 1049850, 
         image: 'https://images.unsplash.com/photo-1542272604-787c3835535d', 
         category: 'Apparel',
         sellerName: 'Denim Co.',
@@ -255,7 +255,7 @@ export const mockProducts: ProductExtended[] = [
     { 
         id: 11, 
         name: 'Bluetooth Headphones', 
-        price: 129.99, 
+        price: 1949850, 
         image: 'https://images.unsplash.com/photo-1505740420928-5e560c06d30e', 
         category: 'Electronics',
         sellerName: 'Audio Tech',
@@ -281,7 +281,7 @@ export const mockProducts: ProductExtended[] = [
     { 
         id: 12, 
         name: 'Minimal Vase', 
-        price: 39.99, 
+        price: 599850, 
         image: 'https://images.unsplash.com/photo-1612196808214-5ab53696a6e7', 
         category: 'Home Goods',
         sellerName: 'Home Decor Plus',

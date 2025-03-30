@@ -1,8 +1,8 @@
 import { type SharedData } from '@/types';
 import { Head, usePage } from '@inertiajs/react';
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { SiteHeader } from '@/layouts/site/site-header';
-import { SiteFooter } from '@/layouts/site/side-footer';
+import { SiteFooter } from '@/layouts/site/site-footer';
 import { PromotionalSlider } from '@/components/ui/PromotionalSlider';
 import { TrustIndicators } from '@/components/ui/TrustIndicators';
 import { ProductGrid } from '@/components/products/product-grid';
@@ -10,13 +10,25 @@ import { CategoryGrid } from '@/components/categories/category-grid';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { mockProducts, categories, promotionalSlides, trustIndicators } from '@/data/mock-data';
 
-const SITE_NAME = "NEXU";
+const SITE_NAME = import.meta.env.SITE_NAME || 'NEXU';
 
 export default function Welcome() {
     const { auth } = usePage<SharedData>().props;
     const [activeCategory, setActiveCategory] = useState('All');
     const [searchQuery, setSearchQuery] = useState('');
     const [visibleProducts, setVisibleProducts] = useState(6);
+    const [cartItemCount, setCartItemCount] = useState(0);
+    
+    // Get cart item count on mount
+    useEffect(() => {
+        try {
+            const cartItems = JSON.parse(localStorage.getItem('cart') || '[]');
+            setCartItemCount(cartItems.length);
+        } catch (error) {
+            console.error('Error reading cart data:', error);
+            setCartItemCount(0);
+        }
+    }, []);
     
     // Filter products based on category and search query
     const filteredProducts = mockProducts.filter(product => {
@@ -58,6 +70,7 @@ export default function Welcome() {
                     registerRoute={route('register')}
                     searchQuery={searchQuery}
                     onSearchChange={setSearchQuery}
+                    cartItemCount={cartItemCount}
                 />
                 
                 {/* Promotional Slider */}

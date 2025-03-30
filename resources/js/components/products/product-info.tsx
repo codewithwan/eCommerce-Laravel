@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react';
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { type ProductExtended } from '@/data/mock-data';
+import { formatCurrency } from '@/lib/utils';
 
 interface ProductInfoProps {
   product: ProductExtended;
@@ -65,7 +66,8 @@ export function ProductInfo({ product, onAddToCart }: ProductInfoProps) {
         </div>
       </div>
       
-      <div className="text-xl font-bold text-primary">${product.price.toFixed(2)}</div>
+      {/* Updated price display with formatCurrency utility */}
+      <div className="text-xl font-bold text-primary">{formatCurrency(product.price)}</div>
       
       <div className="pt-4">
         <p className="text-sm text-muted-foreground">Seller</p>

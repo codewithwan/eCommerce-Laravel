@@ -9,12 +9,20 @@ Route::get('/', function () {
 
 // Product detail route
 Route::get('/products/{id}', function ($id) {
-    // In a real app, you would fetch the product from a database
-    // For demo, we'll use mock data from the frontend
     return Inertia::render('product-detail', [
         'productId' => (int) $id,
     ]);
 })->name('product.detail');
+
+// Cart route
+Route::get('/shopping-cart', function () {
+    return Inertia::render('shopping-cart');
+})->name('shopping-cart');
+
+// Checkout route
+Route::get('/checkout', function () {
+    return Inertia::render('checkout');
+})->name('checkout');
 
 Route::middleware(['auth', 'verified'])->group(function () {
     Route::get('dashboard', function () {
