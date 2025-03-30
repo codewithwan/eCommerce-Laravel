@@ -1,8 +1,8 @@
-import { TableCell, TableRow } from "@/components/ui/table";
+import { Minus, Plus, Trash2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
-import { Trash2, Plus, Minus } from 'lucide-react';
-import { formatCurrency } from '@/lib/utils';
+import { TableCell, TableRow } from "@/components/ui/table";
+import { formatCurrency } from "@/lib/utils";
+import { Checkbox } from "@/components/ui/checkbox";
 
 interface CartItemProps {
   id: number;
@@ -11,9 +11,11 @@ interface CartItemProps {
   price: number;
   image: string;
   quantity: number;
-  options: Record<string, string>;
-  onUpdateQuantity: (itemId: number, newQuantity: number) => void;
-  onRemove: (itemId: number) => void;
+  options?: Record<string, string>;
+  isSelected: boolean;
+  onToggleSelect: () => void;
+  onUpdateQuantity: (id: number, quantity: number) => void;
+  onRemove: (id: number) => void;
 }
 
 export function CartItem({
@@ -23,69 +25,75 @@ export function CartItem({
   image,
   quantity,
   options,
+  isSelected,
+  onToggleSelect,
   onUpdateQuantity,
-  onRemove
+  onRemove,
 }: CartItemProps) {
+  const formattedPrice = formatCurrency(price);
+  const subtotal = price * quantity;
+  const formattedSubtotal = formatCurrency(subtotal);
+
   return (
-    <TableRow>
+    <TableRow className={!isSelected ? "opacity-70" : ""}>
       <TableCell>
-        <div className="h-16 w-16 rounded overflow-hidden">
-          <img 
-            src={`${image}?w=100&h=100&fit=crop`} 
-            alt={name} 
-            className="h-full w-full object-cover"
+        <Checkbox
+          checked={isSelected}
+          onCheckedChange={onToggleSelect}
+        />
+      </TableCell>
+      <TableCell>
+        <div className="w-20 h-20 relative">
+          <img
+            src={image}
+            alt={name}
+            className="object-cover w-full h-full rounded-md"
           />
         </div>
       </TableCell>
       <TableCell>
         <div>
-          <div className="font-medium">{name}</div>
-          {Object.entries(options).length > 0 && (
-            <div className="text-sm text-muted-foreground mt-1">
+          <h3 className="font-medium">{name}</h3>
+          {options && Object.keys(options).length > 0 && (
+            <div className="mt-1 text-sm text-muted-foreground">
               {Object.entries(options).map(([key, value]) => (
-                <div key={key}>{key}: {value}</div>
+                <div key={key}>
+                  <span className="font-medium">{key}:</span> {value}
+                </div>
               ))}
             </div>
           )}
         </div>
       </TableCell>
-      <TableCell>{formatCurrency(price)}</TableCell>
+      <TableCell>{formattedPrice}</TableCell>
       <TableCell>
         <div className="flex items-center space-x-1">
-          <Button 
-            variant="outline" 
-            size="icon" 
-            className="h-8 w-8" 
+          <Button
+            variant="outline"
+            size="icon"
+            className="h-7 w-7"
             onClick={() => onUpdateQuantity(id, quantity - 1)}
             disabled={quantity <= 1}
           >
-            <Minus className="h-4 w-4" />
+            <Minus className="h-3 w-3" />
           </Button>
-          <Input
-            type="number"
-            min="1"
-            value={quantity}
-            onChange={(e) => onUpdateQuantity(id, parseInt(e.target.value) || 1)}
-            className="w-14 h-8 text-center"
-          />
-          <Button 
-            variant="outline" 
-            size="icon" 
-            className="h-8 w-8" 
+          <span className="w-8 text-center">{quantity}</span>
+          <Button
+            variant="outline"
+            size="icon"
+            className="h-7 w-7"
             onClick={() => onUpdateQuantity(id, quantity + 1)}
           >
-            <Plus className="h-4 w-4" />
+            <Plus className="h-3 w-3" />
           </Button>
         </div>
       </TableCell>
-      <TableCell className="text-right font-medium">
-        {formatCurrency(price * quantity)}
-      </TableCell>
+      <TableCell className="text-right">{formattedSubtotal}</TableCell>
       <TableCell>
-        <Button 
-          variant="ghost" 
-          size="icon" 
-          className="h-8 w-8 text-destructive"
+        <Button
+          variant="ghost"
+          size="icon"
+          className="h-7 w-7 text-destructive"
           onClick={() => onRemove(id)}
         >
           <Trash2 className="h-4 w-4" />

@@ -1,6 +1,6 @@
 import { type Product } from '@/components/products/product-card';
-import { type PromotionalSlide } from '@/components/ui/PromotionalSlider';
-import { type TrustIndicator } from '@/components/ui/TrustIndicators';
+import { type PromotionalSlide } from '@/components/ui/promotional-slider';
+import { type TrustIndicator } from '@/components/ui/trust-indicator';
 
 // Product option types
 export interface ProductOption {

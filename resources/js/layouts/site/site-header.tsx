@@ -1,6 +1,7 @@
 import { Link } from '@inertiajs/react';
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
+import { ShoppingBag, MessageCircle, ClipboardList, Bell } from "lucide-react";
 
 interface SiteHeaderProps {
     siteName: string;
@@ -41,14 +42,30 @@ export function SiteHeader({
                 <div className="flex items-center gap-4">
                     <Link href="/shopping-cart">
                         <Button variant="ghost" size="icon" aria-label="Shopping cart" className="relative">
-                            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="h-5 w-5">
-                                <path strokeLinecap="round" strokeLinejoin="round" d="M15.75 10.5V6a3.75 3.75 0 1 0-7.5 0v4.5m11.356-1.993 1.263 12c.07.665-.45 1.243-1.119 1.243H4.25a1.125 1.125 0 0 1-1.12-1.243l1.264-12A1.125 1.125 0 0 1 5.513 7.5h12.974c.576 0 1.059.435 1.119 1.007ZM8.625 10.5a.375.375 0 1 1-.75 0 .375.375 0 0 1 .75 0Zm7.5 0a.375.375 0 1 1-.75 0 .375.375 0 0 1 .75 0Z" />
-                            </svg>
+                            <ShoppingBag className="h-5 w-5" />
                             {cartItemCount > 0 && (
                                 <span className="absolute -top-2 -right-2 flex h-5 w-5 items-center justify-center rounded-full bg-primary text-[10px] font-medium text-primary-foreground">
                                     {cartItemCount}
                                 </span>
                             )}
+                        </Button>
+                    </Link>
+                    
+                    <Link href="/chat">
+                        <Button variant="ghost" size="icon" aria-label="Chat" className="relative">
+                            <MessageCircle className="h-5 w-5" />
+                        </Button>
+                    </Link>
+                    
+                    <Link href="/order-history">
+                        <Button variant="ghost" size="icon" aria-label="Order History" className="relative">
+                            <ClipboardList className="h-5 w-5" />
+                        </Button>
+                    </Link>
+                    
+                    <Link href="/notifications">
+                        <Button variant="ghost" size="icon" aria-label="Notifications" className="relative">
+                            <Bell className="h-5 w-5" />
                         </Button>
                     </Link>
                     
