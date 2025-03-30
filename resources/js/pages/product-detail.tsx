@@ -1,8 +1,7 @@
 import { type SharedData } from '@/types';
 import { Head, usePage, Link } from '@inertiajs/react';
 import { useState, useEffect } from 'react';
-import { SiteHeader } from '@/layouts/site/site-header';
-import { SiteFooter } from '@/layouts/site/site-footer';
+import { MainLayout } from '@/layouts/site/main-layout';
 import { Button } from "@/components/ui/button";
 import { ProductImageGallery } from '@/components/products/product-image-gallery';
 import { ProductInfo } from '@/components/products/product-info';
@@ -19,10 +18,8 @@ interface ProductDetailProps {
 }
 
 export default function ProductDetail({ productId }: ProductDetailProps) {
-  const { auth } = usePage<SharedData>().props;
   const [product, setProduct] = useState<ProductExtended | null>(null);
   const [loading, setLoading] = useState(true);
-  const [cartItemCount, setCartItemCount] = useState(0);
   const [isAlertOpen, setIsAlertOpen] = useState(false);
   const [pendingCartItem, setPendingCartItem] = useState<{
     quantity: number;
@@ -34,21 +31,7 @@ export default function ProductDetail({ productId }: ProductDetailProps) {
     const foundProduct = mockProducts.find(p => p.id === productId);
     setProduct(foundProduct || null);
     setLoading(false);
-    
-    // Get initial cart count
-    getCartItemCount();
   }, [productId]);
-  
-  // Get cart item count from localStorage
-  const getCartItemCount = () => {
-    try {
-      const cartItems = JSON.parse(localStorage.getItem('cart') || '[]');
-      setCartItemCount(cartItems.length);
-    } catch (error) {
-      console.error('Error reading cart data:', error);
-      setCartItemCount(0);
-    }
-  };
   
   // Loading state
   if (loading) {
@@ -67,7 +50,7 @@ export default function ProductDetail({ productId }: ProductDetailProps) {
         <div className="text-center">
           <div className="mb-4 text-4xl font-bold">Product Not Found</div>
           <p className="mb-8 text-lg text-muted-foreground">The product you're looking for doesn't exist or has been removed.</p>
-          <Link href={route('welcome')}>
+          <Link href={route('home')}>
             <Button>Return to Home</Button>
           </Link>
         </div>
@@ -113,8 +96,8 @@ export default function ProductDetail({ productId }: ProductDetailProps) {
     cartItems.push(cartItem);
     localStorage.setItem('cart', JSON.stringify(cartItems));
     
-    // Update cart count
-    setCartItemCount(cartItems.length);
+    // Dispatch custom event to notify about cart update
+    window.dispatchEvent(new Event('cartUpdated'));
     
     // Show toast notification using sonner
     toast.success("Added to cart", {
@@ -130,63 +113,41 @@ export default function ProductDetail({ productId }: ProductDetailProps) {
   };
   
   return (
-    <>
-      <Head title={`${product.name} - ${SITE_NAME}`}>
-        <link rel="preconnect" href="https://fonts.bunny.net" />
-        <link href="https://fonts.bunny.net/css?family=instrument-sans:400,500,600" rel="stylesheet" />
-      </Head>
-      
-      <div className="min-h-screen bg-background text-foreground">
-        {/* Header */}
-        <SiteHeader 
-          siteName={SITE_NAME}
-          isAuthenticated={!!auth.user}
-          dashboardRoute={route('dashboard')}
-          loginRoute={route('login')}
-          registerRoute={route('register')}
-          searchQuery=""
-          onSearchChange={() => {}}
-          cartItemCount={cartItemCount}
-        />
-        
-        {/* Breadcrumbs */}
-        <div className="border-b">
-          <div className="container mx-auto px-4 py-3">
-            <div className="flex items-center space-x-2 text-sm text-muted-foreground">
-              <Link href={route('welcome')} className="hover:text-foreground">Home</Link>
-              <span>/</span>
-              <Link href={route('welcome', { category: product.category })} className="hover:text-foreground">{product.category}</Link>
-              <span>/</span>
-              <span className="text-foreground">{product.name}</span>
-            </div>
+    <MainLayout title={`${product.name} - ${SITE_NAME}`}>
+      {/* Breadcrumbs */}
+      <div className="border-b">
+        <div className="container mx-auto px-4 py-3">
+          <div className="flex items-center space-x-2 text-sm text-muted-foreground">
+            <Link href={route('home')} className="hover:text-foreground">Home</Link>
+            <span>/</span>
+            <Link href={route('home', { category: product.category })} className="hover:text-foreground">{product.category}</Link>
+            <span>/</span>
+            <span className="text-foreground">{product.name}</span>
           </div>
         </div>
-        
-        {/* Product Detail */}
-        <main className="container mx-auto px-4 py-8">
-          <div className="grid grid-cols-1 gap-8 md:grid-cols-2">
-            {/* Product Images */}
-            <ProductImageGallery images={productImages} productName={product.name} />
-            
-            {/* Product Info */}
-            <ProductInfo product={product} onAddToCart={confirmAddToCart} />
-          </div>
-          
-          {/* Product Details Tabs */}
-          <div className="mt-12">
-            <ProductTabs product={product} />
-          </div>
-
-          {/* Related Products */}
-          <RelatedProducts 
-            currentProductId={product.id} 
-            categoryProducts={mockProducts.filter(p => p.category === product.category)} 
-          />
-        </main>
-        
-        {/* Footer */}
-        <SiteFooter siteName={SITE_NAME} />
       </div>
+      
+      {/* Product Detail */}
+      <main className="container mx-auto px-4 py-8">
+        <div className="grid grid-cols-1 gap-8 md:grid-cols-2">
+          {/* Product Images */}
+          <ProductImageGallery images={productImages} productName={product.name} />
+          
+          {/* Product Info */}
+          <ProductInfo product={product} onAddToCart={confirmAddToCart} />
+        </div>
+        
+        {/* Product Details Tabs */}
+        <div className="mt-12">
+          <ProductTabs product={product} />
+        </div>
+
+        {/* Related Products */}
+        <RelatedProducts 
+          currentProductId={product.id} 
+          categoryProducts={mockProducts.filter(p => p.category === product.category)} 
+        />
+      </main>
       
       {/* Confirmation Dialog for Cart Addition */}
       <ConfirmationDialog
@@ -201,6 +162,6 @@ export default function ProductDetail({ productId }: ProductDetailProps) {
         cancelText="Cancel"
         confirmText="Add to Cart"
       />
-    </>
+    </MainLayout>
   );
 }
