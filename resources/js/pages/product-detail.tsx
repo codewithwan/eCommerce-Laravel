@@ -1,5 +1,5 @@
 import { type SharedData } from '@/types';
-import { Head, usePage, Link, router } from '@inertiajs/react';
+import { Head, usePage, Link } from '@inertiajs/react';
 import { useState, useEffect } from 'react';
 import { SiteHeader } from '@/layouts/site/site-header';
 import { SiteFooter } from '@/layouts/site/site-footer';

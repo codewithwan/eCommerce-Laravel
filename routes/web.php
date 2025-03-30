@@ -19,6 +19,11 @@ Route::get('/shopping-cart', function () {
     return Inertia::render('shopping-cart');
 })->name('shopping-cart');
 
+// Order history route
+Route::get('/order-history', function () {
+    return Inertia::render('order-history');
+})->name('order-history');
+
 // Checkout route
 Route::get('/checkout', function () {
     return Inertia::render('checkout');

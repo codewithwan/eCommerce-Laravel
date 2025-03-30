@@ -3,7 +3,7 @@ import { Head, Link, router } from '@inertiajs/react';
 import { SiteHeader } from '@/layouts/site/site-header';
 import { SiteFooter } from '@/layouts/site/site-footer';
 import { Card, CardContent } from "@/components/ui/card";
-import { Table, TableBody, TableCaption, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
+import { Table, TableBody, TableCaption, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { ShoppingBag } from 'lucide-react';
 import { toast } from "sonner";
 import { type SharedData } from '@/types';
