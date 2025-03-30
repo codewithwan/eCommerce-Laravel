@@ -10,6 +10,7 @@ import { ProductTabs } from '@/components/products/product-tabs';
 import { RelatedProducts } from '@/components/products/related-products';
 import { toast } from "sonner";
 import { mockProducts, type ProductExtended } from '@/data/mock-data';
+import { ConfirmationDialog } from "@/components/ui/confirmation-dialog";
 
 const SITE_NAME = import.meta.env.SITE_NAME || 'NEXU';
 
@@ -22,6 +23,11 @@ export default function ProductDetail({ productId }: ProductDetailProps) {
   const [product, setProduct] = useState<ProductExtended | null>(null);
   const [loading, setLoading] = useState(true);
   const [cartItemCount, setCartItemCount] = useState(0);
+  const [isAlertOpen, setIsAlertOpen] = useState(false);
+  const [pendingCartItem, setPendingCartItem] = useState<{
+    quantity: number;
+    options?: Record<string, string>;
+  } | null>(null);
   
   // Find product by ID from mock data
   useEffect(() => {
@@ -77,8 +83,18 @@ export default function ProductDetail({ productId }: ProductDetailProps) {
     `${product.image}?w=600&h=600&fit=crop&blur=100`, // Blurred version
   ];
   
-  // Add to cart handler
-  const handleAddToCart = (quantity: number, selectedOptions?: Record<string, string>) => {
+  // Function to open the confirmation dialog
+  const confirmAddToCart = (quantity: number, selectedOptions?: Record<string, string>) => {
+    setPendingCartItem({ quantity, options: selectedOptions });
+    setIsAlertOpen(true);
+  };
+  
+  // Function to handle the actual cart addition after confirmation
+  const proceedAddToCart = () => {
+    if (!pendingCartItem || !product) return;
+    
+    const { quantity, options } = pendingCartItem;
+    
     // Get existing cart items from localStorage
     const cartItems = JSON.parse(localStorage.getItem('cart') || '[]');
     
@@ -90,7 +106,7 @@ export default function ProductDetail({ productId }: ProductDetailProps) {
       price: product.price,
       image: product.image,
       quantity,
-      options: selectedOptions || {},
+      options: options || {},
     };
     
     // Add to cart
@@ -105,9 +121,12 @@ export default function ProductDetail({ productId }: ProductDetailProps) {
       description: `${quantity} × ${product.name} added to your cart.`
     });
     
-    if (selectedOptions) {
-      console.log('Selected options:', selectedOptions);
+    if (options) {
+      console.log('Selected options:', options);
     }
+    
+    // Reset pending cart item
+    setPendingCartItem(null);
   };
   
   return (
@@ -150,14 +169,14 @@ export default function ProductDetail({ productId }: ProductDetailProps) {
             <ProductImageGallery images={productImages} productName={product.name} />
             
             {/* Product Info */}
-            <ProductInfo product={product} onAddToCart={handleAddToCart} />
+            <ProductInfo product={product} onAddToCart={confirmAddToCart} />
           </div>
           
           {/* Product Details Tabs */}
           <div className="mt-12">
             <ProductTabs product={product} />
           </div>
-          
+
           {/* Related Products */}
           <RelatedProducts 
             currentProductId={product.id} 
@@ -168,6 +187,20 @@ export default function ProductDetail({ productId }: ProductDetailProps) {
         {/* Footer */}
         <SiteFooter siteName={SITE_NAME} />
       </div>
+      
+      {/* Confirmation Dialog for Cart Addition */}
+      <ConfirmationDialog
+        open={isAlertOpen}
+        onOpenChange={setIsAlertOpen}
+        onConfirm={proceedAddToCart}
+        title="Add to Cart"
+        description={pendingCartItem ? 
+          `Are you sure you want to add ${pendingCartItem.quantity} × ${product?.name} to your cart?` :
+          'Add this item to your cart?'
+        }
+        cancelText="Cancel"
+        confirmText="Add to Cart"
+      />
     </>
   );
 }

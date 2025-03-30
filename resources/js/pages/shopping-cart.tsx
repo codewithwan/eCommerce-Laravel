@@ -14,6 +14,7 @@ import { OrderSummary } from '@/components/cart/order-summary';
 import { CartActions } from '@/components/cart/cart-actions';
 import { RelatedProducts } from '@/components/products/related-products';
 import { mockProducts } from '@/data/mock-data';
+import { Checkbox } from "@/components/ui/checkbox";
 
 const SITE_NAME = import.meta.env.SITE_NAME || 'NEXU';
 
@@ -32,19 +33,44 @@ export default function Cart() {
   const { auth } = usePage<SharedData>().props;
   const [cartItems, setCartItems] = useState<CartItem[]>([]);
   const [loading, setLoading] = useState(true);
+  const [selectedItems, setSelectedItems] = useState<number[]>([]);
 
   useEffect(() => {
     const savedCart = localStorage.getItem('cart');
     if (savedCart) {
-      setCartItems(JSON.parse(savedCart));
+      const items = JSON.parse(savedCart);
+      setCartItems(items);
+      // Select all items by default
+      setSelectedItems(items.map((item: CartItem) => item.id));
     }
     setLoading(false);
   }, []);
 
-  // Calculate subtotal
-  const subtotal = cartItems.reduce((total, item) => total + (item.price * item.quantity), 0);
-  const shipping = subtotal > 0 ? 50000 : 0;
-  const total = subtotal + shipping;
+  // Calculate subtotal (only for selected items)
+  const subtotal = cartItems
+    .filter(item => selectedItems.includes(item.id))
+    .reduce((total, item) => total + (item.price * item.quantity), 0);
+  // Remove shipping calculation
+  const total = subtotal;
+
+  // Toggle item selection
+  const toggleItemSelection = (itemId: number) => {
+    setSelectedItems(prev => 
+      prev.includes(itemId) 
+        ? prev.filter(id => id !== itemId)
+        : [...prev, itemId]
+    );
+  };
+
+  // Select all items
+  const selectAllItems = () => {
+    setSelectedItems(cartItems.map(item => item.id));
+  };
+
+  // Deselect all items
+  const deselectAllItems = () => {
+    setSelectedItems([]);
+  };
 
   // Update cart item quantity
   const updateQuantity = (itemId: number, newQuantity: number) => {
@@ -81,13 +107,17 @@ export default function Cart() {
 
   // Proceed to checkout
   const handleCheckout = () => {
-    if (cartItems.length === 0) {
-      toast.error("Your cart is empty", {
-        description: "Add items to your cart before proceeding to checkout."
+    const itemsToCheckout = cartItems.filter(item => selectedItems.includes(item.id));
+    
+    if (itemsToCheckout.length === 0) {
+      toast.error("No items selected", {
+        description: "Please select items to checkout."
       });
       return;
     }
     
+    // Store selected items for checkout
+    localStorage.setItem('checkoutItems', JSON.stringify(itemsToCheckout));
     router.visit(route('checkout'));
   };
 
@@ -154,10 +184,32 @@ export default function Cart() {
               <div className="lg:col-span-2">
                 <Card>
                   <CardContent className="p-0">
+                    <div className="px-4 pt-4 flex justify-between items-center">
+                      <div className="flex items-center gap-2">
+                        <Checkbox 
+                          id="select-all"
+                          checked={selectedItems.length === cartItems.length}
+                          onCheckedChange={() => {
+                            if (selectedItems.length === cartItems.length) {
+                              deselectAllItems();
+                            } else {
+                              selectAllItems();
+                            }
+                          }}
+                        />
+                        <label htmlFor="select-all" className="text-sm font-medium cursor-pointer">
+                          Select All Items
+                        </label>
+                      </div>
+                      <div className="text-sm text-muted-foreground">
+                        {selectedItems.length} of {cartItems.length} items selected
+                      </div>
+                    </div>
                     <Table>
                       <TableCaption>Your current shopping cart items.</TableCaption>
                       <TableHeader>
                         <TableRow>
+                          <TableHead className="w-[50px]"></TableHead>
                           <TableHead className="w-[100px]">Product</TableHead>
                           <TableHead>Description</TableHead>
                           <TableHead>Price</TableHead>
@@ -171,6 +223,8 @@ export default function Cart() {
                           <CartItem
                             key={item.id}
                             {...item}
+                            isSelected={selectedItems.includes(item.id)}
+                            onToggleSelect={() => toggleItemSelection(item.id)}
                             onUpdateQuantity={updateQuantity}
                             onRemove={removeItem}
                           />
@@ -189,10 +243,12 @@ export default function Cart() {
               <div>
                 <OrderSummary
                   subtotal={subtotal}
-                  shipping={shipping}
+                  shipping={0}
                   total={total}
                   onCheckout={handleCheckout}
-                  isEmpty={cartItems.length === 0}
+                  isEmpty={selectedItems.length === 0}
+                  selectedItemCount={selectedItems.length}
+                  totalItemCount={cartItems.length}
                 />
               </div>
             </div>

@@ -1,7 +1,6 @@
-import { Button } from '@/components/ui/button';
-import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
-import { Separator } from '@/components/ui/separator';
-import { CreditCard } from 'lucide-react';
+import { Button } from "@/components/ui/button";
+import { Card, CardContent, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
+import { formatCurrency } from "@/lib/utils";
 
 interface OrderSummaryProps {
   subtotal: number;
@@ -9,39 +8,51 @@ interface OrderSummaryProps {
   total: number;
   onCheckout: () => void;
   isEmpty: boolean;
+  selectedItemCount?: number;
+  totalItemCount?: number;
 }
 
-export function OrderSummary({ subtotal, shipping, total, onCheckout, isEmpty }: OrderSummaryProps) {
+export function OrderSummary({
+  subtotal,
+  shipping,
+  total,
+  onCheckout,
+  isEmpty,
+  selectedItemCount,
+  totalItemCount,
+}: OrderSummaryProps) {
+  const formattedSubtotal = formatCurrency(subtotal);
+  const formattedTotal = formatCurrency(total);
+
   return (
-    <Card className="sticky top-4">
+    <Card>
       <CardHeader>
         <CardTitle>Order Summary</CardTitle>
-        <CardDescription>Review your order details</CardDescription>
       </CardHeader>
-      <CardContent className="space-y-4">
-        <div className="space-y-2">
+      <CardContent>
+        {selectedItemCount !== undefined && totalItemCount !== undefined && (
+          <p className="text-sm text-muted-foreground mb-4">
+            {selectedItemCount} of {totalItemCount} items selected for checkout
+          </p>
+        )}
+        <div className="space-y-1.5">
           <div className="flex justify-between">
-            <span className="text-muted-foreground">Subtotal</span>
-            <span>Rp {subtotal.toLocaleString()}</span>
+            <span className="font-medium">Subtotal</span>
+            <span>{formattedSubtotal}</span>
           </div>
-          <div className="flex justify-between">
-            <span className="text-muted-foreground">Shipping</span>
-            <span>Rp {shipping.toLocaleString()}</span>
-          </div>
-          <Separator />
-          <div className="flex justify-between font-medium text-lg">
+          <div className="border-t my-2 pt-2 flex justify-between font-bold">
             <span>Total</span>
-            <span>Rp {total.toLocaleString()}</span>
+            <span>{formattedTotal}</span>
           </div>
         </div>
       </CardContent>
       <CardFooter>
         <Button 
-          className="w-full flex items-center gap-2" 
-          onClick={onCheckout}
+          className="w-full" 
+          size="lg" 
+          onClick={onCheckout} 
           disabled={isEmpty}
         >
-          <CreditCard className="h-4 w-4" />
           Proceed to Checkout
         </Button>
       </CardFooter>
