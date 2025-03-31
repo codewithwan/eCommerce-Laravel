@@ -14,7 +14,6 @@ interface OrderSummaryProps {
 
 export function OrderSummary({
   subtotal,
-  shipping,
   total,
   onCheckout,
   isEmpty,

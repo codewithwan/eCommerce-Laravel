@@ -20,7 +20,6 @@ interface ShippingMethodSelectorProps {
 
 export function ShippingMethodSelector({
   shippingOptions,
-  selectedCourier,
   selectedShipping,
   onShippingSelection,
   onBack,

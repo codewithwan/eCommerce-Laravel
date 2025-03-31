@@ -1,13 +1,10 @@
 import { useState, useEffect } from 'react';
-import { Head, Link, router } from '@inertiajs/react';
-import { SiteHeader } from '@/layouts/site/site-header';
-import { SiteFooter } from '@/layouts/site/site-footer';
+import { Link, router } from '@inertiajs/react';
+import { MainLayout } from '@/layouts/site/main-layout';
 import { Card, CardContent } from "@/components/ui/card";
-import { Table, TableBody, TableCaption, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
+import { Table, TableBody, TableCaption, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { ShoppingBag } from 'lucide-react';
 import { toast } from "sonner";
-import { type SharedData } from '@/types';
-import { usePage } from '@inertiajs/react';
 import { CartItem } from '@/components/cart/cart-item';
 import { EmptyCart } from '@/components/cart/empty-cart';
 import { OrderSummary } from '@/components/cart/order-summary';
@@ -30,7 +27,6 @@ interface CartItem {
 }
 
 export default function Cart() {
-  const { auth } = usePage<SharedData>().props;
   const [cartItems, setCartItems] = useState<CartItem[]>([]);
   const [loading, setLoading] = useState(true);
   const [selectedItems, setSelectedItems] = useState<number[]>([]);
@@ -82,6 +78,9 @@ export default function Cart() {
 
     setCartItems(updatedItems);
     localStorage.setItem('cart', JSON.stringify(updatedItems));
+    
+    // Dispatch custom event to notify about cart update
+    window.dispatchEvent(new Event('cartUpdated'));
   };
 
   // Remove item from cart
@@ -89,6 +88,9 @@ export default function Cart() {
     const updatedItems = cartItems.filter(item => item.id !== itemId);
     setCartItems(updatedItems);
     localStorage.setItem('cart', JSON.stringify(updatedItems));
+    
+    // Dispatch custom event to notify about cart update
+    window.dispatchEvent(new Event('cartUpdated'));
 
     toast.info("Item removed", {
       description: "The item has been removed from your cart."
@@ -99,6 +101,9 @@ export default function Cart() {
   const clearCart = () => {
     setCartItems([]);
     localStorage.removeItem('cart');
+    
+    // Dispatch custom event to notify about cart update
+    window.dispatchEvent(new Event('cartUpdated'));
 
     toast.info("Cart cleared", {
       description: "All items have been removed from your cart."
@@ -137,139 +142,117 @@ export default function Cart() {
   const relatedProducts = getRelatedProducts();
 
   return (
-    <>
-      <Head title={`Shopping Cart - ${SITE_NAME}`}>
-        <link rel="preconnect" href="https://fonts.bunny.net" />
-        <link href="https://fonts.bunny.net/css?family=instrument-sans:400,500,600" rel="stylesheet" />
-      </Head>
-
-      <div className="min-h-screen bg-background text-foreground flex flex-col">
-        {/* Header */}
-        <SiteHeader
-          siteName={SITE_NAME}
-          isAuthenticated={!!auth.user}
-          dashboardRoute={route('dashboard')}
-          loginRoute={route('login')}
-          registerRoute={route('register')}
-          searchQuery=""
-          onSearchChange={() => { }}
-          cartItemCount={cartItems.length}
-        />
-
-        {/* Breadcrumbs */}
-        <div className="border-b">
-          <div className="container mx-auto px-4 py-3">
-            <div className="flex items-center space-x-2 text-sm text-muted-foreground">
-              <Link href={route('welcome')} className="hover:text-foreground">Home</Link>
-              <span>/</span>
-              <span className="text-foreground">Shopping Cart</span>
-            </div>
+    <MainLayout title={`Shopping Cart - ${SITE_NAME}`}>
+      {/* Breadcrumbs */}
+      <div className="border-b">
+        <div className="container mx-auto px-4 py-3">
+          <div className="flex items-center space-x-2 text-sm text-muted-foreground">
+            <Link href={route('home')} className="hover:text-foreground">Home</Link>
+            <span>/</span>
+            <span className="text-foreground">Shopping Cart</span>
           </div>
         </div>
+      </div>
 
-        <main className="container mx-auto px-4 py-8 flex-grow">
-          <h1 className="text-3xl font-bold mb-6 flex items-center gap-2">
-            <ShoppingBag className="h-8 w-8" />
-            Shopping Cart
-          </h1>
+      <main className="container mx-auto px-4 py-8 flex-grow">
+        <h1 className="text-3xl font-bold mb-6 flex items-center gap-2">
+          <ShoppingBag className="h-8 w-8" />
+          Shopping Cart
+        </h1>
 
-          {loading ? (
-            <div className="text-center py-8">
-              <div className="mb-4 text-xl">Loading your cart...</div>
-            </div>
-          ) : cartItems.length === 0 ? (
-            <EmptyCart continuePath={route('welcome')} />
-          ) : (
-            <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
-              <div className="lg:col-span-2">
-                <Card>
-                  <CardContent className="p-0">
-                    <div className="px-4 pt-4 flex justify-between items-center">
-                      <div className="flex items-center gap-2">
-                        <Checkbox 
-                          id="select-all"
-                          checked={selectedItems.length === cartItems.length}
-                          onCheckedChange={() => {
-                            if (selectedItems.length === cartItems.length) {
-                              deselectAllItems();
-                            } else {
-                              selectAllItems();
-                            }
-                          }}
-                        />
-                        <label htmlFor="select-all" className="text-sm font-medium cursor-pointer">
-                          Select All Items
-                        </label>
-                      </div>
-                      <div className="text-sm text-muted-foreground">
-                        {selectedItems.length} of {cartItems.length} items selected
-                      </div>
+        {loading ? (
+          <div className="text-center py-8">
+            <div className="mb-4 text-xl">Loading your cart...</div>
+          </div>
+        ) : cartItems.length === 0 ? (
+          <EmptyCart continuePath={route('home')} />
+        ) : (
+          <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
+            <div className="lg:col-span-2">
+              <Card>
+                <CardContent className="p-0">
+                  <div className="px-4 pt-4 flex justify-between items-center">
+                    <div className="flex items-center gap-2">
+                      <Checkbox 
+                        id="select-all"
+                        checked={selectedItems.length === cartItems.length}
+                        onCheckedChange={() => {
+                          if (selectedItems.length === cartItems.length) {
+                            deselectAllItems();
+                          } else {
+                            selectAllItems();
+                          }
+                        }}
+                      />
+                      <label htmlFor="select-all" className="text-sm font-medium cursor-pointer">
+                        Select All Items
+                      </label>
                     </div>
-                    <Table>
-                      <TableCaption>Your current shopping cart items.</TableCaption>
-                      <TableHeader>
-                        <TableRow>
-                          <TableHead className="w-[50px]"></TableHead>
-                          <TableHead className="w-[100px]">Product</TableHead>
-                          <TableHead>Description</TableHead>
-                          <TableHead>Price</TableHead>
-                          <TableHead>Quantity</TableHead>
-                          <TableHead className="text-right">Subtotal</TableHead>
-                          <TableHead className="w-[50px]"></TableHead>
-                        </TableRow>
-                      </TableHeader>
-                      <TableBody>
-                        {cartItems.map((item) => (
-                          <CartItem
-                            key={item.id}
-                            {...item}
-                            isSelected={selectedItems.includes(item.id)}
-                            onToggleSelect={() => toggleItemSelection(item.id)}
-                            onUpdateQuantity={updateQuantity}
-                            onRemove={removeItem}
-                          />
-                        ))}
-                      </TableBody>
-                    </Table>
-                  </CardContent>
-                </Card>
+                    <div className="text-sm text-muted-foreground">
+                      {selectedItems.length} of {cartItems.length} items selected
+                    </div>
+                  </div>
+                  <Table>
+                    <TableCaption>Your current shopping cart items.</TableCaption>
+                    <TableHeader>
+                      <TableRow>
+                        <TableHead className="w-[50px]"></TableHead>
+                        <TableHead className="w-[100px]">Product</TableHead>
+                        <TableHead>Description</TableHead>
+                        <TableHead>Price</TableHead>
+                        <TableHead>Quantity</TableHead>
+                        <TableHead className="text-right">Subtotal</TableHead>
+                        <TableHead className="w-[50px]"></TableHead>
+                      </TableRow>
+                    </TableHeader>
+                    <TableBody>
+                      {cartItems.map((item) => (
+                        <CartItem
+                          key={item.id}
+                          {...item}
+                          isSelected={selectedItems.includes(item.id)}
+                          onToggleSelect={() => toggleItemSelection(item.id)}
+                          onUpdateQuantity={updateQuantity}
+                          onRemove={removeItem}
+                        />
+                      ))}
+                    </TableBody>
+                  </Table>
+                </CardContent>
+              </Card>
 
-                <CartActions
-                  onClearCart={clearCart}
-                  continuePath={route('welcome')}
-                />
-              </div>
-
-              <div>
-                <OrderSummary
-                  subtotal={subtotal}
-                  shipping={0}
-                  total={total}
-                  onCheckout={handleCheckout}
-                  isEmpty={selectedItems.length === 0}
-                  selectedItemCount={selectedItems.length}
-                  totalItemCount={cartItems.length}
-                />
-              </div>
-            </div>
-          )}
-
-          {/* Related Products Section */}
-          {!loading && cartItems.length > 0 && relatedProducts.length > 0 && (
-            <div className="mt-16 border-t pt-8">
-              <h2 className="text-2xl font-bold mb-6">You might also like</h2>
-              <RelatedProducts
-                currentProductId={-1}
-                categoryProducts={relatedProducts}
-                maxCount={6}
+              <CartActions
+                onClearCart={clearCart}
+                continuePath={route('home')}
               />
             </div>
-          )}
-        </main>
 
-        {/* Footer */}
-        <SiteFooter siteName={SITE_NAME} />
-      </div>
-    </>
+            <div>
+              <OrderSummary
+                subtotal={subtotal}
+                shipping={0}
+                total={total}
+                onCheckout={handleCheckout}
+                isEmpty={selectedItems.length === 0}
+                selectedItemCount={selectedItems.length}
+                totalItemCount={cartItems.length}
+              />
+            </div>
+          </div>
+        )}
+
+        {/* Related Products Section */}
+        {!loading && cartItems.length > 0 && relatedProducts.length > 0 && (
+          <div className="mt-16 border-t pt-8">
+            <h2 className="text-2xl font-bold mb-6">You might also like</h2>
+            <RelatedProducts
+              currentProductId={-1}
+              categoryProducts={relatedProducts}
+              maxCount={6}
+            />
+          </div>
+        )}
+      </main>
+    </MainLayout>
   );
 }
