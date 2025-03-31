@@ -15,18 +15,18 @@ export interface ProductExtended extends Product {
         brand: string;
         model: string;
         warranty: string;
-        [key: string]: string; 
+        [key: string]: string;
     };
-    options?: ProductOption[]; 
+    options?: ProductOption[];
 }
 
 // Mock product data with extended information
 export const mockProducts: ProductExtended[] = [
-    { 
-        id: 1, 
-        name: 'Minimalist Watch', 
-        price: 1949850, 
-        image: 'https://images.unsplash.com/photo-1523275335684-37898b6baf30', 
+    {
+        id: 1,
+        name: 'Minimalist Watch',
+        price: 1949850,
+        image: 'https://images.unsplash.com/photo-1523275335684-37898b6baf30',
         category: 'Accessories',
         sellerName: 'Elegant Accessories',
         rating: 4.5,
@@ -52,11 +52,11 @@ export const mockProducts: ProductExtended[] = [
             }
         ]
     },
-    { 
-        id: 2, 
-        name: 'Modern Backpack', 
-        price: 1349850, 
-        image: 'https://images.unsplash.com/photo-1491637639811-60e2756cc1c7', 
+    {
+        id: 2,
+        name: 'Modern Backpack',
+        price: 1349850,
+        image: 'https://images.unsplash.com/photo-1491637639811-60e2756cc1c7',
         category: 'Accessories',
         sellerName: 'Urban Bags',
         rating: 4.3,
@@ -72,11 +72,11 @@ export const mockProducts: ProductExtended[] = [
             laptopCompartment: "Up to 15 inches"
         }
     },
-    { 
-        id: 3, 
-        name: 'Wireless Earbuds', 
-        price: 1199850, 
-        image: 'https://images.unsplash.com/photo-1572569511254-d8f925fe2cbb', 
+    {
+        id: 3,
+        name: 'Wireless Earbuds',
+        price: 1199850,
+        image: 'https://images.unsplash.com/photo-1572569511254-d8f925fe2cbb',
         category: 'Electronics',
         sellerName: 'Tech Gadgets',
         rating: 4.7,
@@ -92,11 +92,11 @@ export const mockProducts: ProductExtended[] = [
             noiseReduction: "Active Noise Cancellation"
         }
     },
-    { 
-        id: 4, 
-        name: 'Ceramic Mug', 
+    {
+        id: 4,
+        name: 'Ceramic Mug',
         price: 374850,
-        image: 'https://images.unsplash.com/photo-1514228742587-6b1558fcca3d', 
+        image: 'https://images.unsplash.com/photo-1514228742587-6b1558fcca3d',
         category: 'Home Goods',
         sellerName: 'HomeStyle',
         rating: 4.8,
@@ -112,11 +112,11 @@ export const mockProducts: ProductExtended[] = [
             dishwasherSafe: "Yes"
         }
     },
-    { 
-        id: 5, 
-        name: 'Leather Wallet', 
-        price: 749850, 
-        image: 'https://images.unsplash.com/photo-1517254797898-ee1bd2748ce5', 
+    {
+        id: 5,
+        name: 'Leather Wallet',
+        price: 749850,
+        image: 'https://images.unsplash.com/photo-1517254797898-ee1bd2748ce5',
         category: 'Accessories',
         sellerName: 'Leather Luxe',
         rating: 4.6,
@@ -132,11 +132,11 @@ export const mockProducts: ProductExtended[] = [
             rfidProtection: "Yes"
         }
     },
-    { 
-        id: 6, 
-        name: 'Desk Lamp', 
-        price: 899850, 
-        image: 'https://images.unsplash.com/photo-1507473885765-e6ed057f782c', 
+    {
+        id: 6,
+        name: 'Desk Lamp',
+        price: 899850,
+        image: 'https://images.unsplash.com/photo-1507473885765-e6ed057f782c',
         category: 'Home Goods',
         sellerName: 'Bright Lights',
         rating: 4.2,
@@ -152,11 +152,11 @@ export const mockProducts: ProductExtended[] = [
             lightModes: "3 brightness levels, 3 color temperatures"
         }
     },
-    { 
-        id: 7, 
-        name: 'Minimalist Chair', 
+    {
+        id: 7,
+        name: 'Minimalist Chair',
         price: 2999850,
-        image: 'https://images.unsplash.com/photo-1503602642458-232111445657', 
+        image: 'https://images.unsplash.com/photo-1503602642458-232111445657',
         category: 'Home Goods',
         sellerName: 'Modern Furniture',
         rating: 4.9,
@@ -172,11 +172,11 @@ export const mockProducts: ProductExtended[] = [
             weightCapacity: "150kg"
         }
     },
-    { 
-        id: 8, 
-        name: 'Smart Speaker', 
+    {
+        id: 8,
+        name: 'Smart Speaker',
         price: 2249850,
-        image: 'https://images.unsplash.com/photo-1546868871-7041f2a55e12', 
+        image: 'https://images.unsplash.com/photo-1546868871-7041f2a55e12',
         category: 'Electronics',
         sellerName: 'Smart Home',
         rating: 4.4,
@@ -192,11 +192,11 @@ export const mockProducts: ProductExtended[] = [
             assistantCompatibility: "Google Assistant, Amazon Alexa"
         }
     },
-    { 
-        id: 9, 
-        name: 'Cotton T-Shirt', 
-        price: 524850, 
-        image: 'https://images.unsplash.com/photo-1521572163474-6864f9cf17ab', 
+    {
+        id: 9,
+        name: 'Cotton T-Shirt',
+        price: 524850,
+        image: 'https://images.unsplash.com/photo-1521572163474-6864f9cf17ab',
         category: 'Apparel',
         sellerName: 'Casual Wear',
         rating: 4.3,
@@ -222,11 +222,11 @@ export const mockProducts: ProductExtended[] = [
             }
         ]
     },
-    { 
-        id: 10, 
-        name: 'Slim Fit Jeans', 
-        price: 1049850, 
-        image: 'https://images.unsplash.com/photo-1542272604-787c3835535d', 
+    {
+        id: 10,
+        name: 'Slim Fit Jeans',
+        price: 1049850,
+        image: 'https://images.unsplash.com/photo-1542272604-787c3835535d',
         category: 'Apparel',
         sellerName: 'Denim Co.',
         rating: 4.5,
@@ -252,11 +252,11 @@ export const mockProducts: ProductExtended[] = [
             }
         ]
     },
-    { 
-        id: 11, 
-        name: 'Bluetooth Headphones', 
-        price: 1949850, 
-        image: 'https://images.unsplash.com/photo-1505740420928-5e560c06d30e', 
+    {
+        id: 11,
+        name: 'Bluetooth Headphones',
+        price: 1949850,
+        image: 'https://images.unsplash.com/photo-1505740420928-5e560c06d30e',
         category: 'Electronics',
         sellerName: 'Audio Tech',
         rating: 4.7,
@@ -278,11 +278,11 @@ export const mockProducts: ProductExtended[] = [
             }
         ]
     },
-    { 
-        id: 12, 
-        name: 'Minimal Vase', 
-        price: 599850, 
-        image: 'https://images.unsplash.com/photo-1612196808214-5ab53696a6e7', 
+    {
+        id: 12,
+        name: 'Minimal Vase',
+        price: 599850,
+        image: 'https://images.unsplash.com/photo-1612196808214-5ab53696a6e7',
         category: 'Home Goods',
         sellerName: 'Home Decor Plus',
         rating: 4.4,

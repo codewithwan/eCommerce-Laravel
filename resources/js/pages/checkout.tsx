@@ -326,7 +326,7 @@ export default function Checkout() {
         // Clear cart after successful checkout
         localStorage.removeItem('cart');
         setCartItems([]);
-        
+
         // Dispatch custom event to notify about cart update
         window.dispatchEvent(new Event('cartUpdated'));
 
@@ -353,145 +353,145 @@ export default function Checkout() {
 
     return (
         <MainLayout title={`Checkout - ${SITE_NAME}`}>
-          {/* Breadcrumbs */}
-          <div className="border-b">
-              <div className="container mx-auto px-4 py-3">
-                  <div className="flex items-center space-x-2 text-sm text-muted-foreground">
-                      <Link href={route('home')} className="hover:text-foreground">Home</Link>
-                      <span>/</span>
-                      <Link href={route('shopping-cart')} className="hover:text-foreground">Cart</Link>
-                      <span>/</span>
-                      <span className="text-foreground">Checkout</span>
-                  </div>
-              </div>
-          </div>
+            {/* Breadcrumbs */}
+            <div className="border-b">
+                <div className="container mx-auto px-4 py-3">
+                    <div className="flex items-center space-x-2 text-sm text-muted-foreground">
+                        <Link href={route('home')} className="hover:text-foreground">Home</Link>
+                        <span>/</span>
+                        <Link href={route('shopping-cart')} className="hover:text-foreground">Cart</Link>
+                        <span>/</span>
+                        <span className="text-foreground">Checkout</span>
+                    </div>
+                </div>
+            </div>
 
-          <main className="container mx-auto px-4 py-8 flex-grow">
-              <h1 className="text-3xl font-bold mb-6 flex items-center gap-2">
-                  <CreditCard className="h-8 w-8" />
-                  Checkout
-              </h1>
+            <main className="container mx-auto px-4 py-8 flex-grow">
+                <h1 className="text-3xl font-bold mb-6 flex items-center gap-2">
+                    <CreditCard className="h-8 w-8" />
+                    Checkout
+                </h1>
 
-              {loading ? (
-                  <div className="text-center py-8">
-                      <div className="mb-4 text-xl">Loading your checkout information...</div>
-                  </div>
-              ) : cartItems.length === 0 && !orderComplete ? (
-                  <Card>
-                      <CardContent className="pt-6 pb-8 text-center">
-                          <div className="mb-4">
-                              <ShoppingBag className="mx-auto h-12 w-12 text-muted-foreground" />
-                          </div>
-                          <h3 className="text-xl font-medium mb-2">Your cart is empty</h3>
-                          <p className="text-muted-foreground mb-6">
-                              You don't have any items in your cart to checkout.
-                          </p>
-                          <Button onClick={() => router.visit(route('home'))}>
-                              Continue Shopping
-                          </Button>
-                      </CardContent>
-                  </Card>
-              ) : (
-                  <div className={`grid grid-cols-1 ${activeStep === 'complete' ? '' : 'lg:grid-cols-3'} gap-8`}>
-                      <div className={activeStep === 'complete' ? 'mx-auto max-w-xl w-full' : 'lg:col-span-2'}>
-                          <Tabs value={activeStep} className="mb-8">
-                              {activeStep !== 'complete' && (
-                                  <div>
-                                      <TabsList className="w-full grid grid-cols-3">
-                                          <TabsTrigger value="address" disabled={activeStep !== 'address' && activeStep !== 'complete'}>
-                                              <div className="flex items-center gap-2">
-                                                  <MapPin className="h-4 w-4" />
-                                                  <span className="hidden sm:inline">Address</span>
-                                              </div>
-                                          </TabsTrigger>
-                                          <TabsTrigger value="shipping" disabled={activeStep !== 'shipping' && activeStep !== 'complete'}>
-                                              <div className="flex items-center gap-2">
-                                                  <Truck className="h-4 w-4" />
-                                                  <span className="hidden sm:inline">Shipping</span>
-                                              </div>
-                                          </TabsTrigger>
-                                          <TabsTrigger value="payment" disabled={activeStep !== 'payment' && activeStep !== 'complete'}>
-                                              <div className="flex items-center gap-2">
-                                                  <CreditCard className="h-4 w-4" />
-                                                  <span className="hidden sm:inline">Payment</span>
-                                              </div>
-                                          </TabsTrigger>
-                                      </TabsList>
-                                  </div>
-                              )}
+                {loading ? (
+                    <div className="text-center py-8">
+                        <div className="mb-4 text-xl">Loading your checkout information...</div>
+                    </div>
+                ) : cartItems.length === 0 && !orderComplete ? (
+                    <Card>
+                        <CardContent className="pt-6 pb-8 text-center">
+                            <div className="mb-4">
+                                <ShoppingBag className="mx-auto h-12 w-12 text-muted-foreground" />
+                            </div>
+                            <h3 className="text-xl font-medium mb-2">Your cart is empty</h3>
+                            <p className="text-muted-foreground mb-6">
+                                You don't have any items in your cart to checkout.
+                            </p>
+                            <Button onClick={() => router.visit(route('home'))}>
+                                Continue Shopping
+                            </Button>
+                        </CardContent>
+                    </Card>
+                ) : (
+                    <div className={`grid grid-cols-1 ${activeStep === 'complete' ? '' : 'lg:grid-cols-3'} gap-8`}>
+                        <div className={activeStep === 'complete' ? 'mx-auto max-w-xl w-full' : 'lg:col-span-2'}>
+                            <Tabs value={activeStep} className="mb-8">
+                                {activeStep !== 'complete' && (
+                                    <div>
+                                        <TabsList className="w-full grid grid-cols-3">
+                                            <TabsTrigger value="address" disabled={activeStep !== 'address' && activeStep !== 'complete'}>
+                                                <div className="flex items-center gap-2">
+                                                    <MapPin className="h-4 w-4" />
+                                                    <span className="hidden sm:inline">Address</span>
+                                                </div>
+                                            </TabsTrigger>
+                                            <TabsTrigger value="shipping" disabled={activeStep !== 'shipping' && activeStep !== 'complete'}>
+                                                <div className="flex items-center gap-2">
+                                                    <Truck className="h-4 w-4" />
+                                                    <span className="hidden sm:inline">Shipping</span>
+                                                </div>
+                                            </TabsTrigger>
+                                            <TabsTrigger value="payment" disabled={activeStep !== 'payment' && activeStep !== 'complete'}>
+                                                <div className="flex items-center gap-2">
+                                                    <CreditCard className="h-4 w-4" />
+                                                    <span className="hidden sm:inline">Payment</span>
+                                                </div>
+                                            </TabsTrigger>
+                                        </TabsList>
+                                    </div>
+                                )}
 
-                              {/* ADDRESS CONTENT */}
-                              <TabsContent value="address" className="pt-6">
-                                  <AddressForm
-                                      address={address}
-                                      provinces={provinces}
-                                      regencies={regencies}
-                                      districts={districts}
-                                      villages={villages}
-                                      loadingRegencies={loadingRegencies}
-                                      loadingDistricts={loadingDistricts}
-                                      loadingVillages={loadingVillages}
-                                      isComplete={isAddressComplete}
-                                      onChange={handleAddressChange}
-                                      onBack={() => router.visit(route('shopping-cart'))}
-                                      onContinue={saveAddress}
-                                  />
-                              </TabsContent>
+                                {/* ADDRESS CONTENT */}
+                                <TabsContent value="address" className="pt-6">
+                                    <AddressForm
+                                        address={address}
+                                        provinces={provinces}
+                                        regencies={regencies}
+                                        districts={districts}
+                                        villages={villages}
+                                        loadingRegencies={loadingRegencies}
+                                        loadingDistricts={loadingDistricts}
+                                        loadingVillages={loadingVillages}
+                                        isComplete={isAddressComplete}
+                                        onChange={handleAddressChange}
+                                        onBack={() => router.visit(route('shopping-cart'))}
+                                        onContinue={saveAddress}
+                                    />
+                                </TabsContent>
 
-                              {/* SHIPPING CONTENT */}
-                              <TabsContent value="shipping" className="pt-6">
-                                  <ShippingMethodSelector
-                                      shippingOptions={shippingOptions}
-                                      selectedCourier={selectedCourier}
-                                      selectedShipping={selectedShipping}
-                                      onShippingSelection={handleShippingSelection}
-                                      onBack={() => setActiveStep('address')}
-                                      onContinue={proceedToPayment}
-                                  />
-                              </TabsContent>
+                                {/* SHIPPING CONTENT */}
+                                <TabsContent value="shipping" className="pt-6">
+                                    <ShippingMethodSelector
+                                        shippingOptions={shippingOptions}
+                                        selectedCourier={selectedCourier}
+                                        selectedShipping={selectedShipping}
+                                        onShippingSelection={handleShippingSelection}
+                                        onBack={() => setActiveStep('address')}
+                                        onContinue={proceedToPayment}
+                                    />
+                                </TabsContent>
 
-                              {/* PAYMENT CONTENT */}
-                              <TabsContent value="payment" className="pt-6">
-                                  <PaymentMethodSelector
-                                      paymentMethods={paymentMethods}
-                                      selectedPaymentMethod={selectedPaymentMethod}
-                                      selectedPaymentOption={selectedPaymentOption}
-                                      onPaymentSelection={handlePaymentSelection}
-                                      onBack={() => setActiveStep('shipping')}
-                                      onComplete={completeOrder}
-                                      total={total}
-                                  />
-                              </TabsContent>
+                                {/* PAYMENT CONTENT */}
+                                <TabsContent value="payment" className="pt-6">
+                                    <PaymentMethodSelector
+                                        paymentMethods={paymentMethods}
+                                        selectedPaymentMethod={selectedPaymentMethod}
+                                        selectedPaymentOption={selectedPaymentOption}
+                                        onPaymentSelection={handlePaymentSelection}
+                                        onBack={() => setActiveStep('shipping')}
+                                        onComplete={completeOrder}
+                                        total={total}
+                                    />
+                                </TabsContent>
 
-                              {/* ORDER COMPLETE CONTENT */}
-                              <TabsContent value="complete" className="pt-6">
-                                  <OrderCompletion
-                                      orderNumber={orderNumber}
-                                      onContinueShopping={continueShopping}
-                                  />
-                              </TabsContent>
-                          </Tabs>
-                      </div>
+                                {/* ORDER COMPLETE CONTENT */}
+                                <TabsContent value="complete" className="pt-6">
+                                    <OrderCompletion
+                                        orderNumber={orderNumber}
+                                        onContinueShopping={continueShopping}
+                                    />
+                                </TabsContent>
+                            </Tabs>
+                        </div>
 
-                      {/* Order Summary - Only show when not in complete state */}
-                      {activeStep !== 'complete' && (
-                          <div>
-                              <OrderSummary
-                                  cartItems={cartItems}
-                                  priceBreakdown={priceBreakdown}
-                                  address={address}
-                                  isAddressComplete={isAddressComplete}
-                                  activeStep={activeStep}
-                                  selectedCourier={selectedCourier}
-                                  shippingOptions={shippingOptions}
-                                  onEditAddress={() => setActiveStep('address')}
-                                  onEditShipping={() => setActiveStep('shipping')}
-                              />
-                          </div>
-                      )}
-                  </div>
-              )}
-          </main>
+                        {/* Order Summary - Only show when not in complete state */}
+                        {activeStep !== 'complete' && (
+                            <div>
+                                <OrderSummary
+                                    cartItems={cartItems}
+                                    priceBreakdown={priceBreakdown}
+                                    address={address}
+                                    isAddressComplete={isAddressComplete}
+                                    activeStep={activeStep}
+                                    selectedCourier={selectedCourier}
+                                    shippingOptions={shippingOptions}
+                                    onEditAddress={() => setActiveStep('address')}
+                                    onEditShipping={() => setActiveStep('shipping')}
+                                />
+                            </div>
+                        )}
+                    </div>
+                )}
+            </main>
         </MainLayout>
     );
 }

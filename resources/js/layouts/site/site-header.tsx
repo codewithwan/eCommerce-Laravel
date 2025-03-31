@@ -1,7 +1,7 @@
 import { Link } from '@inertiajs/react';
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
-import { ShoppingBag, MessageCircle, ClipboardList, Bell, User } from "lucide-react";
+import { ShoppingBag, MessageCircle, ClipboardList, Bell, User, Menu, Search, X } from "lucide-react";
 import {
     DropdownMenu,
     DropdownMenuContent,
@@ -12,6 +12,14 @@ import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { useState } from "react";
 import { ConfirmationDialog } from "@/components/ui/confirmation-dialog";
 import { router } from '@inertiajs/react';
+import {
+    Sheet,
+    SheetContent,
+    SheetHeader,
+    SheetTitle,
+    SheetTrigger,
+    SheetClose
+} from "@/components/ui/sheet";
 
 interface SiteHeaderProps {
     siteName: string;
@@ -41,7 +49,8 @@ export function SiteHeader({
     cartItemCount = 0
 }: SiteHeaderProps) {
     const [logoutDialogOpen, setLogoutDialogOpen] = useState(false);
-    
+    const [mobileSearchOpen, setMobileSearchOpen] = useState(false);
+
     // Get initials for avatar fallback
     const getInitials = (name: string) => {
         return name
@@ -51,17 +60,116 @@ export function SiteHeader({
             .toUpperCase()
             .substring(0, 2);
     };
-    
+
     const handleLogout = () => {
         router.post(route('logout'));
     };
 
+    const MobileNavigation = () => (
+        <Sheet>
+            <SheetTrigger asChild>
+                <Button variant="ghost" size="icon" className="md:hidden">
+                    <Menu className="h-5 w-5" />
+                    <span className="sr-only">Menu</span>
+                </Button>
+            </SheetTrigger>
+            <SheetContent side="left" className="w-72 p-6">
+                <SheetHeader >
+                    <SheetTitle>{siteName}</SheetTitle>
+                </SheetHeader>
+                <div className="flex flex-col space-y-4 px-2">
+                    <div className="mb-4">
+                        <Input
+                            type="search"
+                            placeholder="Search products..."
+                            className="h-10 w-full"
+                            value={searchQuery}
+                            onChange={(e) => onSearchChange && onSearchChange(e.target.value)}
+                        />
+                    </div>
+
+                    <SheetClose asChild>
+                        <Link href="/shopping-cart" className="flex items-center py-2">
+                            <ShoppingBag className="mr-3 h-5 w-5" />
+                            <span>Shopping Cart {cartItemCount > 0 && `(${cartItemCount})`}</span>
+                        </Link>
+                    </SheetClose>
+
+                    <SheetClose asChild>
+                        <Link href="/chat" className="flex items-center py-2">
+                            <MessageCircle className="mr-3 h-5 w-5" />
+                            <span>Chat</span>
+                        </Link>
+                    </SheetClose>
+
+                    <SheetClose asChild>
+                        <Link href="/order-history" className="flex items-center py-2">
+                            <ClipboardList className="mr-3 h-5 w-5" />
+                            <span>Order History</span>
+                        </Link>
+                    </SheetClose>
+
+                    <SheetClose asChild>
+                        <Link href="/notifications" className="flex items-center py-2">
+                            <Bell className="mr-3 h-5 w-5" />
+                            <span>Notifications</span>
+                        </Link>
+                    </SheetClose>
+
+                    {isAuthenticated ? (
+                        <>
+                            <SheetClose asChild>
+                                <Link href="/profile" className="flex items-center py-2">
+                                    <User className="mr-3 h-5 w-5" />
+                                    <span>Profile</span>
+                                </Link>
+                            </SheetClose>
+
+                            <SheetClose asChild>
+                                <Link href="/settings" className="flex items-center py-2">
+                                    <span>Settings</span>
+                                </Link>
+                            </SheetClose>
+
+                            <Button
+                                variant="outline"
+                                onClick={() => {
+                                    setLogoutDialogOpen(true);
+                                }}
+                                className="mt-4"
+                            >
+                                Logout
+                            </Button>
+                        </>
+                    ) : (
+                        <div className="flex flex-col space-y-3 mt-4">
+                            <SheetClose asChild>
+                                <Button asChild variant="outline">
+                                    <Link href={loginRoute}>Log in</Link>
+                                </Button>
+                            </SheetClose>
+                            <SheetClose asChild>
+                                <Button asChild>
+                                    <Link href={registerRoute}>Register</Link>
+                                </Button>
+                            </SheetClose>
+                        </div>
+                    )}
+                </div>
+            </SheetContent>
+        </Sheet>
+    );
+
     return (
         <header className="sticky top-0 z-10 border-b bg-background/95 backdrop-blur">
             <div className="container mx-auto flex h-16 items-center justify-between px-4">
-                <Link href="/" className="text-xl font-semibold">{siteName}</Link>
+                <div className="flex items-center">
+                    <MobileNavigation />
+                    <Link href="/" className="text-xl font-semibold">{siteName}</Link>
+                </div>
 
-                <div className="flex w-full max-w-sm items-center space-x-2 px-4 md:max-w-md">
+                {/* Desktop Search */}
+                <div className="hidden md:flex w-full max-w-sm items-center space-x-2 px-4 md:max-w-md">
                     <Input
                         type="search"
                         placeholder="Search products..."
@@ -71,7 +179,40 @@ export function SiteHeader({
                     />
                 </div>
 
+                {/* Mobile Search Toggle */}
+                <div className="md:hidden flex flex-1 justify-end mr-4">
+                    {mobileSearchOpen ? (
+                        <div className="absolute inset-0 bg-background/95 z-20 flex items-center px-4">
+                            <Input
+                                type="search"
+                                placeholder="Search products..."
+                                className="h-9 w-full"
+                                value={searchQuery}
+                                autoFocus
+                                onChange={(e) => onSearchChange && onSearchChange(e.target.value)}
+                            />
+                            <Button
+                                variant="ghost"
+                                size="icon"
+                                className="ml-2"
+                                onClick={() => setMobileSearchOpen(false)}
+                            >
+                                <X className="h-5 w-5" />
+                            </Button>
+                        </div>
+                    ) : (
+                        <Button
+                            variant="ghost"
+                            size="icon"
+                            onClick={() => setMobileSearchOpen(true)}
+                        >
+                            <Search className="h-5 w-5" />
+                        </Button>
+                    )}
+                </div>
+
                 <div className="flex items-center gap-4">
+                    {/* Shopping Cart - Visible on all screens */}
                     <Link href="/shopping-cart">
                         <Button variant="ghost" size="icon" aria-label="Shopping cart" className="relative">
                             <ShoppingBag className="h-5 w-5" />
@@ -83,23 +224,26 @@ export function SiteHeader({
                         </Button>
                     </Link>
 
-                    <Link href="/chat">
-                        <Button variant="ghost" size="icon" aria-label="Chat" className="relative">
-                            <MessageCircle className="h-5 w-5" />
-                        </Button>
-                    </Link>
+                    {/* Other icons - Hidden on mobile */}
+                    <div className="hidden md:flex items-center gap-4">
+                        <Link href="/chat">
+                            <Button variant="ghost" size="icon" aria-label="Chat" className="relative">
+                                <MessageCircle className="h-5 w-5" />
+                            </Button>
+                        </Link>
 
-                    <Link href="/order-history">
-                        <Button variant="ghost" size="icon" aria-label="Order History" className="relative">
-                            <ClipboardList className="h-5 w-5" />
-                        </Button>
-                    </Link>
+                        <Link href="/order-history">
+                            <Button variant="ghost" size="icon" aria-label="Order History" className="relative">
+                                <ClipboardList className="h-5 w-5" />
+                            </Button>
+                        </Link>
 
-                    <Link href="/notifications">
-                        <Button variant="ghost" size="icon" aria-label="Notifications" className="relative">
-                            <Bell className="h-5 w-5" />
-                        </Button>
-                    </Link>
+                        <Link href="/notifications">
+                            <Button variant="ghost" size="icon" aria-label="Notifications" className="relative">
+                                <Bell className="h-5 w-5" />
+                            </Button>
+                        </Link>
+                    </div>
 
                     {isAuthenticated ? (
                         userRole === 'user' ? (
@@ -135,7 +279,7 @@ export function SiteHeader({
                                         </DropdownMenuItem>
                                     </DropdownMenuContent>
                                 </DropdownMenu>
-                                
+
                                 <ConfirmationDialog
                                     open={logoutDialogOpen}
                                     onOpenChange={setLogoutDialogOpen}
@@ -149,12 +293,12 @@ export function SiteHeader({
                             </div>
                         ) : (
                             // Dashboard button for admin/seller
-                            <Link href={dashboardRoute}>
+                            <Link href={dashboardRoute} className="hidden md:block">
                                 <Button variant="default" size="sm">Dashboard</Button>
                             </Link>
                         )
                     ) : (
-                        <div className="flex gap-2">
+                        <div className="hidden md:flex gap-2">
                             <Link href={loginRoute}>
                                 <Button variant="ghost" size="sm">Log in</Button>
                             </Link>
