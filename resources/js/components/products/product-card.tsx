@@ -9,7 +9,8 @@ export interface Product {
     price: number;
     image: string;
     category: string;
-    sellerName: string;
+    sellerName?: string;
+    sellerSlug?: string;
     rating: number;
     soldCount: number;
 }
@@ -19,18 +20,16 @@ interface ProductCardProps {
 }
 
 export function ProductCard({ product }: ProductCardProps) {
-    // State to track if image failed to load
     const [imageError, setImageError] = useState(false);
     
-    // Handle image load error
     const handleImageError = () => {
         setImageError(true);
     };
     
     return (
         <Link 
-            href={route('product.detail', { id: product.id })}
-            className="group overflow-hidden rounded-lg border bg-background p-3 transition-all hover:shadow-md"
+            href={route('products.show', { id: product.id })}
+            className="group flex h-full flex-col overflow-hidden rounded-lg border bg-background p-2 transition-all hover:shadow-md"
         >
             <div className="aspect-square overflow-hidden rounded-md bg-muted">
                 {!imageError ? (
@@ -43,26 +42,39 @@ export function ProductCard({ product }: ProductCardProps) {
                 ) : (
                     <div className="flex h-full w-full items-center justify-center bg-muted">
                         <div className="flex flex-col items-center justify-center text-muted-foreground">
-                            <ImageOff size={48} strokeWidth={1.5} />
-                            <span className="mt-2 text-xs">Image unavailable</span>
+                            <ImageOff size={36} strokeWidth={1.5} />
+                            <span className="mt-1 text-xs">No image</span>
                         </div>
                     </div>
                 )}
             </div>
-            <div className="mt-3 space-y-1">
-                <h3 className="font-medium">{product.name}</h3>
-                <div className="text-sm text-muted-foreground">{product.category}</div>
+            <div className="mt-2 flex-grow space-y-1">
+                <h3 className="line-clamp-1 text-sm font-medium">{product.name}</h3>
+                <div className="line-clamp-1 text-xs text-muted-foreground">{product.category}</div>
                 
-                {/* Using formatCurrency utility */}
                 <div className="font-semibold text-primary">{formatCurrency(product.price)}</div>
                 
-                {/* Rating and sold count below price */}
                 <div className="flex items-center justify-between">
-                    <div className="text-xs text-muted-foreground">{product.sellerName}</div>
+                    <div 
+                        className="line-clamp-1 text-xs text-muted-foreground max-w-[35%] hover:text-primary transition-colors"
+                        onClick={(e) => {
+                            if (product.sellerSlug) {
+                                e.preventDefault();
+                                e.stopPropagation();
+                                window.location.href = route('sellers.show', { slug: product.sellerSlug });
+                            }
+                        }}
+                    >
+                        {product.sellerName || 'Shop'}
+                    </div>
                     <div className="flex items-center text-amber-500">
-                        <span className="text-sm">★</span>
-                        <span className="ml-1 text-xs">{product.rating}</span>
-                        <span className="mx-1.5 text-xs text-muted-foreground">•</span>
+                        <span className="text-xs">★</span>
+                        <span className="ml-0.5 text-xs">
+                            {typeof product.rating === 'number' 
+                                ? product.rating.toFixed(1) 
+                                : parseFloat(String(product.rating || 0)).toFixed(1)}
+                        </span>
+                        <span className="mx-1 text-xs text-muted-foreground">•</span>
                         <span className="text-xs text-muted-foreground">{product.soldCount} sold</span>
                     </div>
                 </div>

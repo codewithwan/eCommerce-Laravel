@@ -1,5 +1,5 @@
-import { useState, useEffect } from 'react';
-import { Link } from '@inertiajs/react';
+import { useState } from 'react';
+import { Link, usePage } from '@inertiajs/react';
 import { MainLayout } from '@/layouts/site/main-layout';
 import { Button } from "@/components/ui/button";
 import {
@@ -12,13 +12,45 @@ import {
 } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { mockOrders, type Order, type OrderStatus } from '@/data/mock-data';
 import { Package, Truck, CheckCircle, Clock, XCircle } from "lucide-react";
 import { formatCurrency } from '@/lib/utils';
 
 const SITE_NAME = import.meta.env.SITE_NAME || 'NEXU';
 
-// Helper function to format date
+export type OrderStatus = 'pending' | 'processing' | 'shipped' | 'delivered' | 'cancelled';
+
+export interface OrderItem {
+    id: number;
+    productId: number;
+    name: string;
+    price: number;
+    image: string;
+    quantity: number;
+    options?: Record<string, string>;
+}
+
+export interface Order {
+    id: number;
+    orderNumber: string;
+    date: string;
+    status: OrderStatus;
+    total: number;
+    items: OrderItem[];
+    shippingAddress: {
+        name: string;
+        address: string;
+        city: string;
+        state: string;
+        postalCode: string;
+        country: string;
+    };
+    trackingNumber?: string;
+}
+
+interface Props {
+    orders: Order[];
+}
+
 const formatDate = (dateString: string) => {
     return new Date(dateString).toLocaleDateString('en-US', {
         year: 'numeric',
@@ -27,7 +59,6 @@ const formatDate = (dateString: string) => {
     });
 };
 
-// Function to get status icon
 const getStatusIcon = (status: OrderStatus) => {
     switch (status) {
         case 'pending':
@@ -45,7 +76,6 @@ const getStatusIcon = (status: OrderStatus) => {
     }
 };
 
-// Function to get status badge variant
 const getStatusVariant = (status: OrderStatus): "outline" | "secondary" | "destructive" | "default" => {
     switch (status) {
         case 'pending':
@@ -64,21 +94,15 @@ const getStatusVariant = (status: OrderStatus): "outline" | "secondary" | "destr
 };
 
 export default function OrderHistory() {
-    const [orders, setOrders] = useState<Order[]>([]);
+    const { orders = [] } = usePage().props as unknown as Props;
     const [activeTab, setActiveTab] = useState<string>("all");
 
-    useEffect(() => {
-        setOrders(mockOrders);
-    }, []);
-
-    // Filter orders based on active tab
     const filteredOrders = activeTab === "all"
         ? orders
         : orders.filter(order => order.status === activeTab);
 
     return (
         <MainLayout title={`Order History - ${SITE_NAME}`}>
-            {/* Main Content */}
             <main className="container mx-auto px-4 py-8">
                 <div className="mb-8 space-y-2">
                     <h1 className="text-3xl font-bold">Order History</h1>
