@@ -4,7 +4,6 @@ import { type BreadcrumbItem } from '@/types';
 import { Head } from '@inertiajs/react';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
-import { Link } from '@inertiajs/react';
 import { StatsCard } from '@/components/ui/stats-card';
 import { Users, ShoppingBag, Store, LineChart } from 'lucide-react';
 

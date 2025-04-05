@@ -1,11 +1,11 @@
-import { Head, Link, usePage } from '@inertiajs/react';
+import { Link, usePage } from '@inertiajs/react';
 import { MainLayout } from '@/layouts/site/main-layout';
 import { ProductGrid } from '@/components/products/product-grid';
 import { type Product } from '@/components/products/product-card';
 import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
 import { Search } from 'lucide-react';
-import { useState, useEffect } from 'react';
+import { useState } from 'react';
 import { CategoryFilter } from '@/components/ui/category-filter';
 
 const SITE_NAME = import.meta.env.SITE_NAME || 'NEXU';
@@ -26,18 +26,17 @@ interface Props {
     search: string;
   };
   categories: string[];
-  debug?: any;
 }
 
 export default function Products() {
-  const { products, filters, categories = [], debug } = usePage().props as unknown as Props;
+  const { products, filters, categories = [] } = usePage().props as unknown as Props;
   const [searchQuery, setSearchQuery] = useState(filters.search || '');
 
   const handleSearch = (e: React.FormEvent) => {
     e.preventDefault();
-    window.location.href = route('products.index', { 
+    window.location.href = route('products.index', {
       category: filters.category !== 'All' ? filters.category : undefined,
-      search: searchQuery 
+      search: searchQuery
     });
   };
 
@@ -46,16 +45,7 @@ export default function Products() {
 
   return (
     <MainLayout title={`${safeCategoryName} - ${SITE_NAME}`}>
-      {/* Debug Info (only in development) */}
-      {debug && (
-        <div className="container mx-auto mb-4 p-4 rounded-lg bg-yellow-50 border border-yellow-200 text-yellow-800">
-          <h3 className="font-bold">Debug Info:</h3>
-          <pre className="text-xs mt-2 overflow-auto max-h-40">
-            {JSON.stringify(debug, null, 2)}
-          </pre>
-        </div>
-      )}
-      
+
       {/* Breadcrumbs */}
       <div className="border-b">
         <div className="container mx-auto px-4 py-3">
@@ -66,19 +56,19 @@ export default function Products() {
           </div>
         </div>
       </div>
-      
+
       <div className="container mx-auto px-4 py-8">
         <div className="mb-8 grid gap-8 md:grid-cols-[250px_1fr]">
           {/* Sidebar with filters */}
           <div className="space-y-6">
             {/* Category filter */}
-            <CategoryFilter 
+            <CategoryFilter
               categories={categories}
               currentCategory={filters.category}
               baseRoute="products.index"
             />
           </div>
-          
+
           <div>
             {/* Search Bar */}
             <div className="mb-6">
@@ -90,24 +80,24 @@ export default function Products() {
                   value={searchQuery}
                   onChange={(e) => setSearchQuery(e.target.value)}
                 />
-                <Button 
-                  type="submit" 
-                  variant="ghost" 
-                  size="icon" 
+                <Button
+                  type="submit"
+                  variant="ghost"
+                  size="icon"
                   className="absolute right-0 top-0 h-full px-3"
                 >
                   <Search className="h-5 w-5" />
                 </Button>
               </form>
             </div>
-            
+
             {/* Products */}
             <div>
               <div className="mb-4 flex items-center justify-between">
                 <h1 className="text-2xl font-bold">{safeCategoryName}</h1>
                 <span className="text-sm text-muted-foreground">{products.total} products</span>
               </div>
-              
+
               {safeProducts.length === 0 ? (
                 <div className="flex h-32 items-center justify-center rounded-lg border border-dashed py-8 text-center">
                   <div>
@@ -120,7 +110,7 @@ export default function Products() {
               ) : (
                 <ProductGrid products={safeProducts} />
               )}
-              
+
               {/* Pagination */}
               {products.last_page > 1 && (
                 <div className="mt-8 flex justify-center">
@@ -137,7 +127,7 @@ export default function Products() {
                         &larr;
                       </Link>
                     )}
-                    
+
                     {Array.from({ length: products.last_page }, (_, i) => i + 1).map((page) => (
                       <Link
                         key={page}
@@ -146,16 +136,15 @@ export default function Products() {
                           search: filters.search || undefined,
                           page,
                         })}
-                        className={`inline-flex h-10 w-10 items-center justify-center rounded-md ${
-                          page === products.current_page
+                        className={`inline-flex h-10 w-10 items-center justify-center rounded-md ${page === products.current_page
                             ? "bg-primary text-primary-foreground"
                             : "border"
-                        }`}
+                          }`}
                       >
                         {page}
                       </Link>
                     ))}
-                    
+
                     {products.current_page < products.last_page && (
                       <Link
                         href={route('products.index', {

@@ -147,15 +147,23 @@ class ProductController extends Controller
             ->latest()
             ->get();
             
-        return Inertia::render('seller-products', [
+        return Inertia::render('products', [
             'seller' => $seller,
-            'products' => $products,
-            'debug' => [
-                'seller_id' => $seller->id,
-                'product_count' => $products->count(),
-                'user_id' => $seller->user_id,
-                'auth_user_id' => Auth::id(),
+            'products' => [
+                'data' => $products,
+                'current_page' => 1,
+                'last_page' => 1,
+                'per_page' => count($products),
+                'total' => count($products),
+                'path' => route('sellers.products', ['id' => $sellerId]),
+                'from' => 1,
+                'to' => count($products),
             ],
+            'filters' => [
+                'category' => 'All',
+                'search' => '',
+            ],
+            'categories' => $products->pluck('category')->unique()->toArray(),
         ]);
     }
 

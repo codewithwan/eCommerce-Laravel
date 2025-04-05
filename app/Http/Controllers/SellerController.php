@@ -114,6 +114,28 @@ class SellerController extends Controller
     {
         $sellers = Seller::where('is_active', true)->get();
         
+        // Add additional metrics for each seller
+        foreach ($sellers as $seller) {
+            // Count products
+            $seller->product_count = Product::where('seller_id', $seller->id)
+                ->where('is_active', true)
+                ->count();
+            
+            // Get total sales
+            $seller->total_sales = Product::where('seller_id', $seller->id)
+                ->sum('sold_count');
+            
+            // Calculate average rating
+            $seller->average_rating = Product::where('seller_id', $seller->id)
+                ->where('is_active', true)
+                ->avg('rating') ?: 0;
+            
+            // Format as proper types
+            $seller->product_count = (int) $seller->product_count;
+            $seller->total_sales = (int) $seller->total_sales;
+            $seller->average_rating = (float) $seller->average_rating;
+        }
+        
         return Inertia::render('sellers', [
             'sellers' => $sellers,
         ]);

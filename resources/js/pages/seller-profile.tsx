@@ -1,6 +1,5 @@
 import { PlaceholderPattern } from '@/components/ui/placeholder-pattern';
 import { MainLayout } from '@/layouts/site/main-layout';
-import { type BreadcrumbItem } from '@/types';
 import { Head } from '@inertiajs/react';
 import { Button } from '@/components/ui/button';
 import { Grid, List, Filter, SlidersHorizontal } from 'lucide-react';
@@ -40,17 +39,6 @@ interface Props {
 }
 
 export default function SellerProfile({ seller, products }: Props) {
-    const breadcrumbs: BreadcrumbItem[] = [
-        {
-            title: 'Store',
-            href: route('sellers.index'),
-        },
-        {
-            title: seller.name,
-            href: route('sellers.show', { slug: seller.slug }),
-        },
-    ];
-
     const safeProducts = Array.isArray(products) ? products : [];
 
     const categories = safeProducts.map(p => p.category).filter((c, i, arr) =>
@@ -70,8 +58,8 @@ export default function SellerProfile({ seller, products }: Props) {
     }));
 
     return (
-        <MainLayout title={`${seller.name} - Toko`}>
-            <Head title={`${seller.name} - Toko`} />
+        <MainLayout title={`${seller.name} - Store`}>
+            <Head title={`${seller.name} - Store`} />
 
             <div className="container mx-auto py-8 px-4">
                 <div className="mb-4">
@@ -83,7 +71,7 @@ export default function SellerProfile({ seller, products }: Props) {
                             <li>
                                 <div className="flex items-center">
                                     <span className="mx-2 text-muted-foreground">/</span>
-                                    <a href={route('sellers.index')} className="text-sm text-muted-foreground hover:text-primary">Toko</a>
+                                    <a href={route('sellers.index')} className="text-sm text-muted-foreground hover:text-primary">Store</a>
                                 </div>
                             </li>
                             <li aria-current="page">
@@ -117,7 +105,7 @@ export default function SellerProfile({ seller, products }: Props) {
                         <div className="flex flex-wrap items-center justify-between border-t border-border bg-muted/20 p-4">
                             <div className="flex items-center gap-6">
                                 <div className="flex items-center gap-2">
-                                    <span className="text-sm font-medium text-muted-foreground">Produk:</span>
+                                    <span className="text-sm font-medium text-muted-foreground">Product:</span>
                                     <span className="font-semibold">{totalProducts}</span>
                                 </div>
                                 <div className="flex items-center gap-2">
@@ -125,17 +113,17 @@ export default function SellerProfile({ seller, products }: Props) {
                                     <span className="font-semibold text-amber-500">{averageRating.toFixed(1) || "N/A"} ★</span>
                                 </div>
                                 <div className="flex items-center gap-2">
-                                    <span className="text-sm font-medium text-muted-foreground">Bergabung:</span>
+                                    <span className="text-sm font-medium text-muted-foreground">Joined:</span>
                                     <span className="font-semibold">{new Date(seller.created_at || Date.now()).toLocaleDateString('id-ID', { year: 'numeric', month: 'long' })}</span>
                                 </div>
                             </div>
 
                             <div className="mt-4 flex gap-2 sm:mt-0">
                                 <Button variant="outline" size="sm">
-                                    Chat dengan Penjual
+                                    Chat with Seller
                                 </Button>
                                 <Button size="sm">
-                                    Ikuti Toko
+                                    Follow Store
                                 </Button>
                             </div>
                         </div>
@@ -144,7 +132,7 @@ export default function SellerProfile({ seller, products }: Props) {
                     {/* Products Section */}
                     <div className="space-y-4">
                         <div className="flex flex-wrap items-center justify-between gap-4">
-                            <h2 className="text-2xl font-bold">Produk Toko</h2>
+                            <h2 className="text-2xl font-bold">Store Products</h2>
 
                             <div className="flex items-center gap-2">
                                 <Tabs defaultValue="grid">
@@ -175,7 +163,7 @@ export default function SellerProfile({ seller, products }: Props) {
                         {categories.length > 0 && (
                             <div className="flex gap-2 overflow-x-auto pb-2">
                                 <Button variant="secondary" size="sm" className="flex-shrink-0">
-                                    Semua Kategori
+                                    All Categories
                                 </Button>
                                 {categories.map((category, index) => (
                                     <Button key={index} variant="outline" size="sm" className="flex-shrink-0">
@@ -189,8 +177,8 @@ export default function SellerProfile({ seller, products }: Props) {
 
                         {safeProducts.length === 0 ? (
                             <div className="rounded-lg border border-dashed p-8 text-center">
-                                <h3 className="text-lg font-medium">Tidak ada produk</h3>
-                                <p className="mt-1 text-muted-foreground">Toko ini belum memiliki produk yang ditampilkan.</p>
+                                <h3 className="text-lg font-medium">No products</h3>
+                                <p className="mt-1 text-muted-foreground">This store has no products to display.</p>
                             </div>
                         ) : (
                             <Tabs defaultValue="grid" className="w-full">

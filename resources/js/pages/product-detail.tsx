@@ -1,5 +1,4 @@
-import { type SharedData } from '@/types';
-import { Head, usePage, Link } from '@inertiajs/react';
+import { usePage, Link } from '@inertiajs/react';
 import { useState, useEffect } from 'react';
 import { MainLayout } from '@/layouts/site/main-layout';
 import { Button } from "@/components/ui/button";
@@ -32,11 +31,10 @@ interface ProductExtended extends Product {
 interface ProductDetailProps {
   product: ProductExtended;
   relatedProducts: Product[];
-  debug?: any;
 }
 
 export default function ProductDetail() {
-  const { product, relatedProducts, debug } = usePage().props as unknown as ProductDetailProps;
+  const { product, relatedProducts } = usePage().props as unknown as ProductDetailProps;
 
   const [isAlertOpen, setIsAlertOpen] = useState(false);
   const [pendingCartItem, setPendingCartItem] = useState<{

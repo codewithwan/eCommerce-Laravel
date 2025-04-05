@@ -4,9 +4,12 @@ import { ProductGrid } from '@/components/products/product-grid';
 import { PromotionalSlider } from '@/components/ui/promotional-slider';
 import { TrustIndicators } from '@/components/ui/trust-indicator';
 import { type Product } from '@/components/products/product-card';
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useMemo } from 'react';
 import { Button } from '@/components/ui/button';
-import { ChevronRight } from 'lucide-react';
+import { Card, CardContent } from '@/components/ui/card';
+import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
+import { Badge } from '@/components/ui/badge';
+import { ChevronRight, Star, ShoppingBag, TrendingUp } from 'lucide-react';
 
 interface PromotionalSlide {
     id: number;
@@ -23,11 +26,27 @@ interface TrustIndicator {
     icon: React.ReactNode;
 }
 
+interface Seller {
+    id: number;
+    name: string;
+    description: string;
+    logo: string;
+    banner: string;
+    slug: string;
+    is_active: boolean;
+    created_at: string;
+    updated_at: string;
+    product_count: number;
+    total_sales: number;
+    average_rating: number;
+}
+
 interface Props {
     products: Product[];
     promotionalSlides?: PromotionalSlide[];
     trustIndicators?: TrustIndicator[];
     categories?: string[];
+    topStores?: Seller[];
 }
 
 const defaultPromotionalSlides: PromotionalSlide[] = [
@@ -97,15 +116,20 @@ const defaultTrustIndicators: TrustIndicator[] = [
 ];
 
 export default function Welcome() {
-    const { products = [], promotionalSlides, trustIndicators, categories = [] } =
+    const { products = [], promotionalSlides, trustIndicators, categories = [], topStores = [] } =
         usePage().props as unknown as Props;
 
-    const safeProducts = Array.isArray(products) ? products : [];
     const slides = promotionalSlides || defaultPromotionalSlides;
     const indicators = trustIndicators || defaultTrustIndicators;
+    const safeTopStores = Array.isArray(topStores) ? topStores : [];
+
+    // Use useMemo to prevent recreating this array on every render
+    const safeProducts = useMemo(() => {
+        return Array.isArray(products) ? products : [];
+    }, [products]);
     
     const [uniqueCategories, setUniqueCategories] = useState<string[]>([]);
-    
+
     useEffect(() => {
         if (categories && categories.length > 0) {
             setUniqueCategories(['All', ...categories]);
@@ -120,27 +144,104 @@ export default function Welcome() {
     return (
         <MainLayout>
             <Head title="NEXU - Minimal e-Commerce" />
-            
+
             <PromotionalSlider slides={slides} />
-            
+
             <TrustIndicators indicators={indicators} />
 
             <div className="container mx-auto px-4 py-12">
+                {/* Top Stores Section */}
+                {safeTopStores.length > 0 && (
+                    <div className="mb-12">
+                        <div className="flex justify-between items-center mb-6">
+                            <h2 className="text-2xl font-bold">Top Stores</h2>
+                            <Link href={route('sellers.index')} className="text-primary hover:underline">
+                                View All Stores
+                            </Link>
+                        </div>
+
+                        <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+                            {safeTopStores.map((store, index) => (
+                                <Card key={store.id} className="overflow-hidden h-full">
+                                    <div className="relative">
+                                        <div className="h-32 w-full overflow-hidden bg-muted">
+                                            {store.banner ? (
+                                                <img
+                                                    src={store.banner}
+                                                    alt={store.name}
+                                                    className="h-full w-full object-cover"
+                                                />
+                                            ) : (
+                                                <div className="h-full w-full bg-gradient-to-r from-primary/10 to-secondary/10"></div>
+                                            )}
+                                        </div>
+                                        <div className="absolute -bottom-6 left-4 z-10">
+                                            <div className="relative">
+                                                <Avatar className="h-16 w-16 border-4 border-background shadow">
+                                                    <AvatarImage src={store.logo} alt={store.name} />
+                                                    <AvatarFallback>{store.name.substring(0, 2).toUpperCase()}</AvatarFallback>
+                                                </Avatar>
+                                                <Badge
+                                                    variant="default"
+                                                    className="absolute -top-2 -right-2 rounded-full w-6 h-6 flex items-center justify-center text-xs font-bold shadow overflow-hidden"
+                                                >
+                                                    {index + 1}
+                                                </Badge>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <CardContent className="pt-8 pb-4">
+                                        <div className="flex justify-between items-start mb-2">
+                                            <h3 className="font-semibold truncate">{store.name}</h3>
+                                            <div className="flex items-center space-x-1 text-amber-500">
+                                                <Star className="h-4 w-4 fill-current" />
+                                                <span>{store.average_rating.toFixed(1)}</span>
+                                            </div>
+                                        </div>
+
+                                        <p className="text-sm text-muted-foreground line-clamp-2 mb-4">{store.description}</p>
+
+                                        <div className="flex justify-between items-center mt-auto">
+                                            <div className="flex gap-3">
+                                                <div className="flex items-center text-xs text-muted-foreground">
+                                                    <ShoppingBag className="h-3.5 w-3.5 mr-1" />
+                                                    <span>{store.product_count}</span>
+                                                </div>
+                                                <div className="flex items-center text-xs text-muted-foreground">
+                                                    <TrendingUp className="h-3.5 w-3.5 mr-1" />
+                                                    <span>{store.total_sales}</span>
+                                                </div>
+                                            </div>
+
+                                            <Button size="sm" variant="outline" asChild className="ml-auto">
+                                                <Link href={route('sellers.show', { slug: store.slug })}>
+                                                    Visit Store
+                                                </Link>
+                                            </Button>
+                                        </div>
+                                    </CardContent>
+                                </Card>
+                            ))}
+                        </div>
+                    </div>
+                )}
+
                 {/* Category filters */}
                 <div className="mb-8">
                     <h2 className="mb-4 text-2xl font-bold">Categories</h2>
                     <div className="flex flex-wrap gap-2">
                         {uniqueCategories.map((category) => (
-                            <Link 
-                                key={category} 
-                                href={category === 'All' 
-                                    ? route('products.index') 
+                            <Link
+                                key={category}
+                                href={category === 'All'
+                                    ? route('products.index')
                                     : route('products.index', { category })
                                 }
                                 className="inline-flex items-center"
                             >
-                                <Button 
-                                    variant="outline" 
+                                <Button
+                                    variant="outline"
                                     className="rounded-full"
                                 >
                                     {category}
@@ -150,14 +251,14 @@ export default function Welcome() {
                         ))}
                     </div>
                 </div>
-                
+
                 <div className="flex justify-between items-center mb-6">
                     <h2 className="text-2xl font-bold">Featured Products</h2>
                     <Link href={route('products.index')} className="text-primary hover:underline">
                         View All
                     </Link>
                 </div>
-                
+
                 <ProductGrid
                     products={safeProducts}
                     initialVisibleCount={12}

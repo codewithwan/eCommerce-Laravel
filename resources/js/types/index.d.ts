@@ -1,5 +1,4 @@
 import { LucideIcon } from 'lucide-react';
-import type { Config } from 'ziggy-js';
 
 export interface Auth {
     user: User;
@@ -31,7 +30,7 @@ export interface SharedData {
     ziggy: {
         url: string;
         port: number | null;
-        defaults: any[];
+        defaults: Record<string, unknown>[];
         routes: Record<string, string>;
     };
     flash?: {
@@ -50,5 +49,5 @@ export interface User {
     email_verified_at: string | null;
     created_at: string;
     updated_at: string;
-    [key: string]: unknown; // This allows for additional properties...
+    [key: string]: unknown;
 }

@@ -3,7 +3,6 @@ import AppLayout from '@/layouts/app-layout';
 import { type BreadcrumbItem } from '@/types';
 import { Head, Link, usePage } from '@inertiajs/react';
 import { Button } from '@/components/ui/button';
-import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
 import { formatCurrency } from '@/lib/utils';
 import { Plus, Pencil, Eye } from 'lucide-react';
 import { Badge } from '@/components/ui/badge';
@@ -49,19 +48,10 @@ interface Props {
         activeProducts: number;
         averageRating: number;
     };
-    debug?: {
-        user_id: number;
-        role: string;
-        seller_id?: number;
-        product_count?: number;
-        seller_count?: number;
-        message?: string;
-        first_product?: any;
-    };
 }
 
 export default function Dashboard() {
-    const { seller, products = [], stats, debug } = usePage().props as unknown as Props;
+    const { seller, products = [], stats } = usePage().props as unknown as Props;
 
     // Ensure products is always an array
     const safeProducts = Array.isArray(products) ? products : [];
@@ -196,8 +186,7 @@ export default function Dashboard() {
                                                             Edit
                                                         </Link>
                                                     );
-                                                } catch (error) {
-                                                    // Fallback to seller products edit if products.edit route is not available
+                                                } catch {
                                                     return (
                                                         <Link href={route('seller.products.edit', { id: product.id })}>
                                                             <Pencil className="mr-1 h-3.5 w-3.5" />
@@ -230,7 +219,7 @@ export default function Dashboard() {
                                             </Button>
                                         </Link>
                                     );
-                                } catch (error) {
+                                } catch {
                                     // Fallback if the route is not available
                                     return (
                                         <Button variant="outline">

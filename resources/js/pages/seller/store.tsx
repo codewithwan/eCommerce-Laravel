@@ -2,10 +2,9 @@ import { PlaceholderPattern } from '@/components/ui/placeholder-pattern';
 import AppLayout from '@/layouts/app-layout';
 import { type BreadcrumbItem } from '@/types';
 import { Head, Link } from '@inertiajs/react';
-import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
+import { Card, CardContent } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
-import { Badge } from '@/components/ui/badge';
-import { Plus, Pencil, Eye, Grid, List, Filter, SlidersHorizontal } from 'lucide-react';
+import { Grid, List, Filter, SlidersHorizontal } from 'lucide-react';
 import { Tabs, TabsList, TabsTrigger, TabsContent } from '@/components/ui/tabs';
 import { Separator } from '@/components/ui/separator';
 import { formatCurrency } from '@/lib/utils';
@@ -50,7 +49,6 @@ export default function SellerStore({ seller, products, categories = [] }: Props
         },
     ];
     
-    // Ensure products is always an array
     const safeProducts = Array.isArray(products) ? products : [];
     
     return (
