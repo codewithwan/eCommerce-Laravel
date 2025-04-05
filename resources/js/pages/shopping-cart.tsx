@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { Link, router } from '@inertiajs/react';
+import { Link, router, usePage } from '@inertiajs/react';
 import { MainLayout } from '@/layouts/site/main-layout';
 import { Card, CardContent } from "@/components/ui/card";
 import { Table, TableBody, TableCaption, TableHead, TableHeader, TableRow } from "@/components/ui/table";
@@ -10,8 +10,8 @@ import { EmptyCart } from '@/components/cart/empty-cart';
 import { OrderSummary } from '@/components/cart/order-summary';
 import { CartActions } from '@/components/cart/cart-actions';
 import { RelatedProducts } from '@/components/products/related-products';
-import { mockProducts } from '@/data/mock-data';
 import { Checkbox } from "@/components/ui/checkbox";
+import { type Product } from '@/components/products/product-card';
 
 const SITE_NAME = import.meta.env.SITE_NAME || 'NEXU';
 
@@ -24,32 +24,35 @@ interface CartItem {
   quantity: number;
   options: Record<string, string>;
   category?: string;
+  sellerName?: string;
+  sellerSlug?: string;
+}
+
+interface Props {
+  suggestedProducts?: Product[];
 }
 
 export default function Cart() {
   const [cartItems, setCartItems] = useState<CartItem[]>([]);
   const [loading, setLoading] = useState(true);
   const [selectedItems, setSelectedItems] = useState<number[]>([]);
+  const { suggestedProducts = [] } = usePage().props as unknown as Props;
 
   useEffect(() => {
     const savedCart = localStorage.getItem('cart');
     if (savedCart) {
       const items = JSON.parse(savedCart);
       setCartItems(items);
-      // Select all items by default
       setSelectedItems(items.map((item: CartItem) => item.id));
     }
     setLoading(false);
   }, []);
 
-  // Calculate subtotal (only for selected items)
   const subtotal = cartItems
     .filter(item => selectedItems.includes(item.id))
     .reduce((total, item) => total + (item.price * item.quantity), 0);
-  // Remove shipping calculation
   const total = subtotal;
 
-  // Toggle item selection
   const toggleItemSelection = (itemId: number) => {
     setSelectedItems(prev => 
       prev.includes(itemId) 
@@ -58,17 +61,14 @@ export default function Cart() {
     );
   };
 
-  // Select all items
   const selectAllItems = () => {
     setSelectedItems(cartItems.map(item => item.id));
   };
 
-  // Deselect all items
   const deselectAllItems = () => {
     setSelectedItems([]);
   };
 
-  // Update cart item quantity
   const updateQuantity = (itemId: number, newQuantity: number) => {
     if (newQuantity < 1) return;
 
@@ -79,17 +79,14 @@ export default function Cart() {
     setCartItems(updatedItems);
     localStorage.setItem('cart', JSON.stringify(updatedItems));
     
-    // Dispatch custom event to notify about cart update
     window.dispatchEvent(new Event('cartUpdated'));
   };
 
-  // Remove item from cart
   const removeItem = (itemId: number) => {
     const updatedItems = cartItems.filter(item => item.id !== itemId);
     setCartItems(updatedItems);
     localStorage.setItem('cart', JSON.stringify(updatedItems));
     
-    // Dispatch custom event to notify about cart update
     window.dispatchEvent(new Event('cartUpdated'));
 
     toast.info("Item removed", {
@@ -97,12 +94,10 @@ export default function Cart() {
     });
   };
 
-  // Clear cart
   const clearCart = () => {
     setCartItems([]);
     localStorage.removeItem('cart');
     
-    // Dispatch custom event to notify about cart update
     window.dispatchEvent(new Event('cartUpdated'));
 
     toast.info("Cart cleared", {
@@ -110,7 +105,6 @@ export default function Cart() {
     });
   };
 
-  // Proceed to checkout
   const handleCheckout = () => {
     const itemsToCheckout = cartItems.filter(item => selectedItems.includes(item.id));
     
@@ -121,29 +115,14 @@ export default function Cart() {
       return;
     }
     
-    // Store selected items for checkout
     localStorage.setItem('checkoutItems', JSON.stringify(itemsToCheckout));
     router.visit(route('checkout'));
   };
 
-  // Get related products based on cart categories
-  const getRelatedProducts = () => {
-    const cartCategories = [...new Set(cartItems.map(item => item.category).filter(Boolean))];
-    const cartProductIds = cartItems.map(item => item.productId);
-
-    if (cartCategories.length === 0) return [];
-
-    return mockProducts.filter(product =>
-      cartCategories.includes(product.category) &&
-      !cartProductIds.includes(product.id)
-    ).slice(0, 6);
-  };
-
-  const relatedProducts = getRelatedProducts();
+  const relatedProducts = Array.isArray(suggestedProducts) ? suggestedProducts : [];
 
   return (
     <MainLayout title={`Shopping Cart - ${SITE_NAME}`}>
-      {/* Breadcrumbs */}
       <div className="border-b">
         <div className="container mx-auto px-4 py-3">
           <div className="flex items-center space-x-2 text-sm text-muted-foreground">
@@ -209,11 +188,19 @@ export default function Cart() {
                       {cartItems.map((item) => (
                         <CartItem
                           key={item.id}
-                          {...item}
-                          isSelected={selectedItems.includes(item.id)}
-                          onToggleSelect={() => toggleItemSelection(item.id)}
+                          id={item.id}
+                          productId={item.productId}
+                          name={item.name}
+                          price={item.price}
+                          image={item.image}
+                          quantity={item.quantity}
+                          options={item.options}
+                          sellerName={item.sellerName}
+                          sellerSlug={item.sellerSlug}
                           onUpdateQuantity={updateQuantity}
                           onRemove={removeItem}
+                          checked={selectedItems.includes(item.id)}
+                          onToggleSelect={toggleItemSelection}
                         />
                       ))}
                     </TableBody>

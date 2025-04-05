@@ -5,6 +5,7 @@ namespace App\Models;
 use App\Enums\UserRole;
 // use Illuminate\Contracts\Auth\MustVerifyEmail;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\Relations\HasOne;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 
@@ -71,5 +72,13 @@ class User extends Authenticatable
     public function isUser(): bool
     {
         return $this->role === UserRole::USER;
+    }
+
+    /**
+     * Get the seller associated with the user.
+     */
+    public function seller(): HasOne
+    {
+        return $this->hasOne(Seller::class);
     }
 }

@@ -1,8 +1,28 @@
 import { useState, useEffect } from 'react';
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import { type ProductExtended } from '@/data/mock-data';
 import { formatCurrency } from '@/lib/utils';
+import { Link } from '@inertiajs/react';
+
+interface ProductOption {
+  name: string;
+  values: string[];
+}
+
+interface ProductExtended {
+  id: number;
+  name: string;
+  price: number;
+  image: string;
+  category: string;
+  sellerName: string;
+  rating: number;
+  soldCount: number;
+  description: string;
+  specifications: Record<string, string>;
+  options?: ProductOption[];
+  sellerSlug?: string;
+}
 
 interface ProductInfoProps {
   product: ProductExtended;
@@ -59,7 +79,11 @@ export function ProductInfo({ product, onAddToCart }: ProductInfoProps) {
       <div className="flex items-center space-x-2">
         <div className="flex items-center text-amber-500">
           <span className="text-lg">★</span>
-          <span className="ml-1 text-base">{product.rating.toFixed(1)}</span>
+          <span className="ml-1 text-base">
+            {typeof product.rating === 'number' 
+              ? product.rating.toFixed(1) 
+              : parseFloat(String(product.rating || 0)).toFixed(1)}
+          </span>
         </div>
         <div className="text-sm text-muted-foreground">
           ({product.soldCount} sold)
@@ -73,17 +97,26 @@ export function ProductInfo({ product, onAddToCart }: ProductInfoProps) {
         <p className="text-sm text-muted-foreground">Seller</p>
         <div className="flex items-center space-x-2 pt-1">
           <div className="h-8 w-8 rounded-full bg-primary/10 flex items-center justify-center">
-            {product.sellerName.charAt(0)}
+            {(product.sellerName || 'S').charAt(0)}
           </div>
           <div>
-            <p className="font-medium">{product.sellerName}</p>
+            {product.sellerSlug ? (
+              <Link 
+                href={route('sellers.show', { slug: product.sellerSlug })}
+                className="font-medium hover:text-primary hover:underline"
+              >
+                {product.sellerName || 'Seller'}
+              </Link>
+            ) : (
+              <p className="font-medium">{product.sellerName || 'Seller'}</p>
+            )}
             <p className="text-xs text-muted-foreground">Verified Seller</p>
           </div>
         </div>
       </div>
       
       {/* Product Options */}
-      {product.options && product.options.length > 0 && (
+      {product.options && Array.isArray(product.options) && product.options.length > 0 && (
         <div className="space-y-4 pt-4">
           {product.options.map((option) => (
             <div key={option.name}>
@@ -92,7 +125,7 @@ export function ProductInfo({ product, onAddToCart }: ProductInfoProps) {
                 {option.name.toLowerCase() === 'color' ? (
                   // Color option with visual swatches
                   <div className="flex flex-wrap gap-2">
-                    {option.values.map((value) => {
+                    {option.values && Array.isArray(option.values) && option.values.map((value) => {
                       const isSelected = selectedOptions[option.name] === value;
                       return (
                         <button
@@ -120,7 +153,7 @@ export function ProductInfo({ product, onAddToCart }: ProductInfoProps) {
                 ) : (
                   // Other options with button selection
                   <div className="flex flex-wrap gap-2">
-                    {option.values.map((value) => (
+                    {option.values && Array.isArray(option.values) && option.values.map((value) => (
                       <button
                         key={value}
                         className={`rounded-md border px-3 py-1 text-sm ${

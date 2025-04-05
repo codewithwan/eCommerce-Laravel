@@ -1,7 +1,15 @@
 import { useState } from 'react';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Button } from "@/components/ui/button";
-import { type ProductExtended } from '@/data/mock-data';
+
+interface ProductExtended {
+  id: number;
+  name: string;
+  description: string;
+  specifications: Record<string, string>;
+  rating: number;
+  soldCount: number;
+}
 
 interface ProductTabsProps {
   product: ProductExtended;
@@ -9,7 +17,21 @@ interface ProductTabsProps {
 
 export function ProductTabs({ product }: ProductTabsProps) {
   const [activeTab, setActiveTab] = useState('description');
-  
+
+  const specifications = product.specifications && typeof product.specifications === 'object'
+    ? product.specifications
+    : {};
+
+  const description = product.description || 'No description available';
+
+  const rating = typeof product.rating === 'number'
+    ? product.rating
+    : parseFloat(String(product.rating || 0));
+
+  const soldCount = typeof product.soldCount === 'number'
+    ? product.soldCount
+    : parseInt(String(product.soldCount || 0), 10);
+
   return (
     <Tabs defaultValue="description" onValueChange={setActiveTab} value={activeTab}>
       <TabsList className="w-full justify-start">
@@ -17,26 +39,32 @@ export function ProductTabs({ product }: ProductTabsProps) {
         <TabsTrigger value="specifications">Specifications</TabsTrigger>
         <TabsTrigger value="reviews">Reviews</TabsTrigger>
       </TabsList>
-      
+
       <TabsContent value="description" className="mt-6">
         <div className="prose max-w-none">
-          <p>{product.description}</p>
+          <p>{description}</p>
         </div>
       </TabsContent>
-      
+
       <TabsContent value="specifications" className="mt-6">
         <div className="overflow-hidden rounded-md border">
-          {Object.entries(product.specifications).map(([key, value], index) => (
-            <div key={key} className={`grid grid-cols-2 border-b ${index % 2 === 1 ? 'bg-muted' : ''} ${index === Object.entries(product.specifications).length - 1 ? 'border-b-0' : ''}`}>
-              <div className="border-r p-3 font-medium">
-                {key.charAt(0).toUpperCase() + key.slice(1).replace(/([A-Z])/g, ' $1')}
+          {Object.keys(specifications).length > 0 ? (
+            Object.entries(specifications).map(([key, value], index) => (
+              <div key={key} className={`grid grid-cols-2 border-b ${index % 2 === 1 ? 'bg-muted' : ''} ${index === Object.entries(specifications).length - 1 ? 'border-b-0' : ''}`}>
+                <div className="border-r p-3 font-medium">
+                  {key.charAt(0).toUpperCase() + key.slice(1).replace(/([A-Z])/g, ' $1')}
+                </div>
+                <div className="p-3">{value}</div>
               </div>
-              <div className="p-3">{value}</div>
+            ))
+          ) : (
+            <div className="p-4 text-center text-muted-foreground">
+              No specifications available
             </div>
-          ))}
+          )}
         </div>
       </TabsContent>
-      
+
       <TabsContent value="reviews" className="mt-6">
         <div className="space-y-6">
           <div className="flex items-center justify-between">
@@ -46,20 +74,20 @@ export function ProductTabs({ product }: ProductTabsProps) {
                 <div className="flex items-center text-amber-500">
                   {[1, 2, 3, 4, 5].map((star) => (
                     <span key={star} className="text-lg">
-                      {star <= Math.round(product.rating) ? '★' : '☆'}
+                      {star <= Math.round(rating) ? '★' : '☆'}
                     </span>
                   ))}
                 </div>
                 <span className="ml-2 text-sm text-muted-foreground">
-                  Based on {Math.round(product.soldCount * 0.6)} reviews
+                  Based on {Math.round(soldCount * 0.6)} reviews
                 </span>
               </div>
             </div>
             <Button variant="outline">Write a Review</Button>
           </div>
-          
+
           <div className="divide-y">
-            {/* Sample reviews */}
+            {/* Sample reviews - later can be replaced with real data */}
             {[...Array(3)].map((_, index) => (
               <div key={index} className="py-4">
                 <div className="flex items-center justify-between">

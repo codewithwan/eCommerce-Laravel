@@ -23,27 +23,26 @@ class UserSeeder extends Seeder
             'role' => UserRole::ADMIN,
         ]);
 
+        // Create a basic Seller user
         User::factory()->create([
             'name' => 'Seller User',
             'email' => 'seller@gmail.com',
             'password' => Hash::make('password'),
             'role' => UserRole::SELLER,
         ]);
+        
+        // Create a basic regular user
         User::factory()->create([
-            'name' => 'User',
+            'name' => 'Regular User',
             'email' => 'user@gmail.com',
             'password' => Hash::make('password'),
             'role' => UserRole::USER,
         ]);
 
-        // Create 3 Seller users
-        User::factory()->count(3)->create([
-            'role' => UserRole::SELLER,
-        ]);
-
-        // Create 10 regular users
+        // Create additional regular users (not sellers)
         User::factory()->count(10)->create([
             'role' => UserRole::USER,
+            'password' => Hash::make('password'),
         ]);
     }
 }
